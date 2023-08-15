@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
@@ -12,7 +13,7 @@ class AuthController extends BaseController
 {
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login','register']]);
+        $this->middleware('auth:api', ['except' => ['login','register','test']]);
     }
 
     public function login()
@@ -55,13 +56,23 @@ class AuthController extends BaseController
         }
     }
 
+    public function authCheck()
+    {
+        $user =  Auth::user();
+
+        return $this->sendResponse(compact('user'));
+
+    }
+
     public function test()
     {
-        $data = [
-            'time' => time(),
-            'user' => Auth::user()
+        $data =  [
+            'message' => 'test OK',
+            'lang' => App::getLocale(),
+            'test' => __('test', ['lang' => App::getLocale()])
         ];
-        return $this->sendResponse($data, 'Test OK');
+
+        return $this->sendResponse(compact('data'));
 
     }
 }
