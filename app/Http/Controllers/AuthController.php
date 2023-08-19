@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UserRequest;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -20,10 +22,12 @@ class AuthController extends BaseController
     {
         if ($token = Auth::attempt(['email' => request('email'), 'password' => request('password')])) {
             $user = Auth::user();
+
             $data = [
                 'token' => $token,
-                'user' => $user
+                'user' => new UserResource($user)
             ];
+
             return $this->sendResponse($data, 'Logged in successfully!');
         } else {
             return $this->sendError('Login failed!');
@@ -38,9 +42,11 @@ class AuthController extends BaseController
             'password' => 'required|string|min:6',
             'password2' => 'required|same:password'
         ]);
+
         if ($validator->fails()) {
             return $this->sendError('Error validation', $validator->errors());
         }
+
         $input = $request->all();
         $input['password'] = bcrypt($input['password']);
         $user = User::create($input);
@@ -48,7 +54,7 @@ class AuthController extends BaseController
             $token = JWTAuth::attempt(['email' => $user->email, 'password' => $request->password]);
             $data = [
                 'token' => $token,
-                'user' => $user
+                'user' => new UserResource($user)
             ];
             return $this->sendResponse($data, 'User created successfully.');
         } else {
@@ -56,12 +62,35 @@ class AuthController extends BaseController
         }
     }
 
-    public function authCheck()
+    public function profile()
     {
-        $user =  Auth::user();
+        $user = Auth::user();
 
-        return $this->sendResponse(compact('user'));
+        return $this->sendResponse(new UserResource($user));
 
+    }
+
+    /**
+     * Update user.
+     */
+    public function update(UserRequest $request)
+    {
+        /** @var User $user */
+        $user = Auth::user();
+
+        $user->name = $request->input('name');
+        $user->email = $request->input('email');
+        $user->phone_country_code = $request->input('phone_country_code');
+        $user->phone_number = $request->input('phone_number');
+        $user->language = $request->input('language');
+
+        if ($request->filled('password')) {
+            $user->password = bcrypt($request->input('password'));
+        }
+
+        $user->save();
+
+        return $this->sendResponse(new UserResource($user), 'User updated successfully.');
     }
 
     public function test()
