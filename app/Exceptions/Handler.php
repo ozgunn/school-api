@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Validation\ValidationException;
@@ -54,6 +55,10 @@ class Handler extends ExceptionHandler
 
         if ($e instanceof AuthenticationException) {
             return response()->json(['error' => 'Authentication error', 'errorMsg' => $e->getMessage()], 401);
+        }
+
+        if ($e instanceof AuthorizationException) {
+            return response()->json(['error' => 'Unauthorized', 'errorMsg' => $e->getMessage()], 403);
         }
 
         return response()->json([

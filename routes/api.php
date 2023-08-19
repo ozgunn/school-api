@@ -22,8 +22,9 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('profile',  [\App\Http\Controllers\AuthController::class, 'profile'])->name('profile');
     Route::put('profile',  [\App\Http\Controllers\AuthController::class, 'update'])->name('profile-update');
 
-    Route::resource('users', \App\Http\Controllers\UserController::class);
-
+    Route::group(['middleware' => 'role:admin'], function () {
+        Route::resource('users', \App\Http\Controllers\UserController::class);
+    });
 });
 
 

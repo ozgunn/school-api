@@ -7,7 +7,6 @@ use App\Http\Requests\UserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class UserController extends BaseController
 {
@@ -51,10 +50,10 @@ class UserController extends BaseController
     /**
      * Update user.
      */
-    public function update(UserRequest $request)
+    public function update(Request $request, int $id)
     {
         /** @var User $user */
-        $user = Auth::user();
+        $user = User::findOrFail($id);
 
         $user->name = $request->input('name');
         $user->email = $request->input('email');
@@ -62,13 +61,9 @@ class UserController extends BaseController
         $user->phone_number = $request->input('phone_number');
         $user->language = $request->input('language');
 
-        if ($request->filled('password')) {
-            $user->password = bcrypt($request->input('password'));
-        }
-
         $user->save();
 
-        return $this->sendResponse($user, 'User updated successfully.');
+        return $this->sendResponse(new UserResource($user), 'User updated successfully.');
     }
 
     /**
