@@ -13,7 +13,9 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME', 'School Api'),
+    'user_identifier' => env('USER_IDENTIFIER', 'email'),
+    'user_auto_approval' => env('USER_AUTO_APPROVAL', true),
 
     /*
     |--------------------------------------------------------------------------
@@ -26,7 +28,7 @@ return [
     |
     */
 
-    'env' => env('APP_ENV', 'production'),
+    'env' => env('APP_ENV', 'development'),
 
     /*
     |--------------------------------------------------------------------------
@@ -67,7 +69,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'Europe/Istanbul',
 
     /*
     |--------------------------------------------------------------------------
@@ -80,7 +82,9 @@ return [
     |
     */
 
-    'locale' => 'en',
+    'locale' => 'tr',
+
+    'languages' => ['tr', 'en'],
 
     /*
     |--------------------------------------------------------------------------
@@ -174,7 +178,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-
+        App\Providers\SmsServiceProvider::class,
     ],
 
     /*
