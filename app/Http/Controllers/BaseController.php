@@ -4,6 +4,13 @@ namespace App\Http\Controllers;
 
 class BaseController extends Controller
 {
+    public string $userIdentifier;
+
+    public function __construct()
+    {
+        $this->userIdentifier = config('app.user_identifier');
+    }
+
     /**
      * success response method.
      *
@@ -24,11 +31,12 @@ class BaseController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function sendError($error, $errorMessages = [], $code = 404)
+    public function sendError($error, $errorMessages = [], $code = 401)
     {
         $response = [
             'success' => false,
-            'message' => $error,
+            'error' => $error,
+            'errorMsg' => $errorMessages
         ];
         if(!empty($errorMessages)){
             $response['data'] = $errorMessages;

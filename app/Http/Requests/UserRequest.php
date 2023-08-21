@@ -1,7 +1,9 @@
 <?php
 namespace App\Http\Requests;
 
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class UserRequest extends FormRequest
@@ -13,47 +15,61 @@ class UserRequest extends FormRequest
 
     public function rules()
     {
-        $userId = \Auth::id();
+        $userId = Auth::id();
 
-        if ($this->isMethod('put')) {
-            return [
-                'name' => 'required|string|max:50',
-                'email' => [
-                    'required',
-                    'string',
-                    'email',
-                    'max:255',
-                    Rule::unique('users')->ignore($userId),
-                ],
-                'password' => 'nullable|string|min:6',
-                'phone_number' => [
-                    'nullable',
-                    'string',
-                    'regex:/^[0-9]{10,12}$/',
-                ],
-                'phone_country_code' => [
-                    'nullable',
-                    'string',
-                    'regex:/^\+[0-9]{1,4}$/',
-                ],
-                'language' => [
-                    'required',
-                    'string',
-                    Rule::in(config('app.languages')),
-                ]
-            ];
-        }
-
-        return [
-            'name' => 'required|string|max:50',
+        $rules = [
+            'name' => 'nullable|string|max:50',
+            'password' => 'nullable|string|min:6',
+            'username' => [
+                'nullable',
+                'string',
+                'min:5','max:20',
+                $this->isMethod('put') ? Rule::unique('users')->ignore($userId) : Rule::unique('users'),
+            ],
             'email' => [
-                'required',
+                'nullable',
                 'string',
                 'email',
                 'max:255',
-                Rule::unique('users'),
+                $this->isMethod('put') ? Rule::unique('users')->ignore($userId) : Rule::unique('users'),
             ],
-            'password' => 'required|string|min:6',
+            'phone_number' => [
+                'nullable',
+                'string',
+                'regex:/^[0-9]{10,12}$/',
+                $this->isMethod('put') ? Rule::unique('users')->ignore($userId) : Rule::unique('users'),
+            ],
+            'phone_country_code' => [
+                'nullable',
+                'string',
+                'regex:/^\+[0-9]{1,4}$/',
+            ],
+            'language' => [
+                'required',
+                'string',
+                Rule::in(config('app.languages')),
+            ],
+            'status' => [
+                'required',
+                Rule::in(User::STATUSES),
+            ],
+            'role' => [
+                Rule::in(User::ROLES),
+            ]
         ];
+
+        $userIdentifier = config('app.user_identifier');
+
+        if ($userIdentifier === "email") {
+            $rules['email'][0] = 'required';
+        }
+        if ($userIdentifier === "phone_number") {
+            $rules['phone_number'][0] = 'required';
+        }
+        if ($userIdentifier === "username") {
+            $rules['username'][0] = 'required';
+        }
+
+        return $rules;
     }
 }

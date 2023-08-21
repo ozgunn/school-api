@@ -19,6 +19,8 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'admin',
                 'email' => 'ozgunn@gmail.com',
+                'phone_number' => '5422212549',
+                'phone_country_code' => '+90',
                 'password' => bcrypt('asdasd'),
                 'role' => 'admin',
                 'status' => 10,

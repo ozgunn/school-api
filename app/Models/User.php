@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -20,12 +21,14 @@ use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
  * @property integer $status
  */
 
-class User extends Authenticatable implements JWTSubject
+class User extends Authenticatable implements JWTSubject, CanResetPassword
 {
     use HasFactory, Notifiable;
 
     const STATUS_PASSIVE = 0;
     const STATUS_ACTIVE = 10;
+    const STATUSES = [self::STATUS_PASSIVE, self::STATUS_ACTIVE];
+
     const ROLE_ADMIN = 'admin';
     const ROLE_MANAGER = 'manager';
     const ROLE_TEACHER = 'teacher';

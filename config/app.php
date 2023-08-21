@@ -14,6 +14,8 @@ return [
     */
 
     'name' => env('APP_NAME', 'School Api'),
+    'user_identifier' => env('USER_IDENTIFIER', 'email'),
+    'user_auto_approval' => env('USER_AUTO_APPROVAL', true),
 
     /*
     |--------------------------------------------------------------------------
@@ -176,7 +178,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-
+        App\Providers\SmsServiceProvider::class,
     ],
 
     /*
