@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\UserData;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -27,5 +28,11 @@ class DatabaseSeeder extends Seeder
                 'language' => 'tr'
             ]
         );
+        UserData::create([
+            'user_id' => 1,
+            'first_name' => 'ozgun',
+            'last_name' => 'aksoy',
+            'address' => 'bayraklı - izmir',
+        ]);
     }
 }

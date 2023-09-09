@@ -17,6 +17,13 @@ return [
     'user_identifier' => env('USER_IDENTIFIER', 'email'),
     'user_auto_approval' => env('USER_AUTO_APPROVAL', true),
 
+    'defaults' => [
+        'locale' => 'tr',
+        'currency' => 'TL',
+        'code' => 'TR',
+        'phone_code' => '+90',
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment

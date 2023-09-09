@@ -94,4 +94,9 @@ class User extends Authenticatable implements JWTSubject, CanResetPassword
     {
         return [];
     }
+
+    public function userData()
+    {
+        return $this->hasOne(UserData::class, 'user_id');
+    }
 }
