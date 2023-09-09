@@ -11,18 +11,22 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users_data', function (Blueprint $table) {
+        Schema::create('schools', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->string('first_name', 50);
-            $table->string('last_name', 50);
+            $table->unsignedBigInteger('parent_id')->nullable();
+            $table->string('name', 100);
             $table->unsignedInteger('country')->nullable();
             $table->unsignedInteger('city')->nullable();
             $table->unsignedInteger('town')->nullable();
             $table->text('address')->nullable();
+            $table->string('logo')->nullable();
+            $table->string('phone', 20)->nullable();
+            $table->string('email', 100)->nullable();
+            $table->tinyInteger('status')->default(1);
             $table->timestamps();
             $table->softDeletes();
 
+            $table->foreign('parent')->references('id')->on('schools')->onDelete('set null');
             $table->foreign('country')->references('id')->on('def_countries')->onDelete('set null');
             $table->foreign('city')->references('id')->on('def_cities')->onDelete('set null');
             $table->foreign('town')->references('id')->on('def_towns')->onDelete('set null');

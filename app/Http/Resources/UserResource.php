@@ -18,7 +18,7 @@ class UserResource extends JsonResource
         return [
             'id' => $this->id,
             'email' => $this->email,
-            'role' => $this->role,
+            'role' => User::ROLES[$this->role],
             'language' => $this->language,
             'status' => $this->status,
             'phone_country_code' => $this->phone_country_code,
@@ -31,6 +31,13 @@ class UserResource extends JsonResource
 
     public function getUserData()
     {
+        // Ortak alanlar
+        $userData = [
+            "first_name" => $this->userData->first_name,
+            "last_name" => $this->userData->last_name,
+            "address" => $this->userData->address,
+        ];
+
         if ($this->role === User::ROLE_ADMIN) {
             /*return [
                 "role" => "admin",
@@ -40,10 +47,6 @@ class UserResource extends JsonResource
 
         }
 
-        return [
-            "first_name" => $this->userData->first_name,
-            "last_name" => $this->userData->last_name,
-            "address" => $this->userData->address,
-        ];
+        return $userData;
     }
 }

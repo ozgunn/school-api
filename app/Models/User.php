@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -23,21 +24,23 @@ use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject, CanResetPassword
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, SoftDeletes;
 
     const STATUS_PASSIVE = 0;
     const STATUS_ACTIVE = 10;
     const STATUSES = [self::STATUS_PASSIVE, self::STATUS_ACTIVE];
 
-    const ROLE_ADMIN = 'admin';
-    const ROLE_MANAGER = 'manager';
-    const ROLE_TEACHER = 'teacher';
-    const ROLE_PARENT = 'parent';
+    const ROLE_SUPERADMIN = 101;
+    const ROLE_ADMIN = 100;
+    const ROLE_MANAGER = 50;
+    const ROLE_TEACHER = 20;
+    const ROLE_PARENT = 10;
     const ROLES = [
-        self::ROLE_ADMIN,
-        self::ROLE_MANAGER,
-        self::ROLE_TEACHER,
-        self::ROLE_PARENT
+        self::ROLE_SUPERADMIN => 'admin',
+        self::ROLE_ADMIN => 'admin',
+        self::ROLE_MANAGER => 'manager',
+        self::ROLE_TEACHER => 'teacher',
+        self::ROLE_PARENT => 'parent'
     ];
 
     /**
@@ -52,9 +55,11 @@ class User extends Authenticatable implements JWTSubject, CanResetPassword
         'phone_country_code',
         'phone_number',
         'language',
+        'role',
+        'status'
     ];
 
-    protected $guarded = ['id', 'role', 'status'];
+    protected $guarded = ['id'];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -98,5 +103,11 @@ class User extends Authenticatable implements JWTSubject, CanResetPassword
     public function userData()
     {
         return $this->hasOne(UserData::class, 'user_id');
+    }
+
+    public function schools()
+    {
+        return $this->belongsToMany(School::class, 'school_user')
+            ->withPivot('role');
     }
 }

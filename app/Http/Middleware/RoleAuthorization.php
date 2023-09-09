@@ -15,7 +15,7 @@ class RoleAuthorization
     public function handle($request, Closure $next, $role)
     {
         $user = Auth::user();
-        if (!in_array($role, User::ROLES) || $user->role !== $role) {
+        if (!in_array($role, User::ROLES) || User::ROLES[$user->role] !== $role) {
             throw new AuthorizationException();
         }
 

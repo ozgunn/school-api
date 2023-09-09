@@ -4,21 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @property string $name
- * @property string $email
- * @property string $phone_country_code
- * @property string $phone_number
- * @property string $language
- * @property string $role
- * @property string $password
- * @property integer $status
+ * @property integer $id
+ * @property integer $user_id
+ * @property string $first_name
+ * @property string $last_name
+ * @property string $address
  */
 
 class UserData extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'users_data';
 
@@ -28,6 +26,7 @@ class UserData extends Model
      * @var array<int, string>
      */
     protected $fillable = [
+        'user_id',
         'first_name',
         'last_name',
         'address',
