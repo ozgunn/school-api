@@ -36,11 +36,15 @@ class BaseController extends Controller
         $response = [
             'success' => false,
             'error' => $error,
-            'errorMsg' => $errorMessages
+            'errorMsg' => $errorMessages,
+            'data' => []
         ];
-        if(!empty($errorMessages)){
-            $response['data'] = $errorMessages;
-        }
+
         return response()->json($response, $code);
+    }
+
+    public function getUser()
+    {
+        return auth()->user();
     }
 }

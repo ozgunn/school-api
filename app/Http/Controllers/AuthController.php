@@ -8,11 +8,13 @@ use App\Models\User;
 use App\Services\Sms\Sms;
 use App\Services\Sms\SmsInterface;
 use App\Services\Sms\SmsModel;
+use Carbon\Carbon;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Password;
@@ -114,56 +116,139 @@ class AuthController extends BaseController
 
     public function resetPassword(Request $request)
     {
-        // TODO: SMS
+        // TODO: Country Code
+        if (config('app.user_identifier') == 'phone_number') {
+            $this->validate($request, [
+                'phone_number' => 'required',
+            ]);
 
-        $this->validate($request, [
-            'email' => 'required|email',
-        ]);
+            $checkIfExists = DB::table('password_resets')
+                ->where('email', $request->phone_number)
+                ->where('created_at', '>', Carbon::now()->subSeconds(env('RESET_PASSWORD_EXPIRE_SMS')))
+                ->first();
 
-        ResetPassword::createUrlUsing(function (User $user, string $token) {
-            return config('app.url').'/reset-password?token='.$token;
-        });
+            if ($checkIfExists) {
+                return $this->sendError(__('Reset code has already been sent'));
+            }
 
-        $status = Password::sendResetLink(
-            $request->only('email')
-        );
+            $token = rand(100000, 999999);
+            DB::table('password_resets')->insert([
+                'email' => $request->phone_number,
+                'token' => $token,
+                'created_at' => Carbon::now()
+            ]);
 
-        return $status === Password::RESET_LINK_SENT
-            ? $this->sendResponse(__('Password reset link sent'))
-            : $this->sendError(__('Failed to send reset link'));
+            $to = config('app.defaults.phone_code').$request->phone_number;
+            $message = __("Your password reset code: ").$token;
+
+            // Send sms
+            //$sms = new SmsModel($to, $message);
+            //$sms->send();
+
+            return $this->sendResponse(__('SMS sent'));
+        }
+
+        if (config('app.user_identifier') == 'email') {
+            $this->validate($request, [
+                'email' => 'required|email',
+            ]);
+
+            ResetPassword::createUrlUsing(function (User $user, string $token) {
+                return config('app.url').'/reset-password?token='.$token;
+            });
+
+            $status = Password::sendResetLink(
+                $request->only('email')
+            );
+
+            return $status === Password::RESET_LINK_SENT
+                ? $this->sendResponse(__('Password reset link sent'))
+                : $this->sendError(__('Failed to send reset link'));
+        }
+
     }
 
     public function resetPasswordConfirm(Request $request)
     {
-        // TODO: SMS
-
         if ($request->isMethod('POST')) {
-            $this->validate($request, [
-                'token' => 'required',
-                'email' => 'required|email',
-                'password' => ['required','confirmed', 'min:6'],
-            ]);
+            if (config('app.user_identifier') == 'phone_number') {
+                $this->validate($request, [
+                    'token' => 'required',
+                    'phone_number' => 'required',
+                    'password' => ['required','confirmed', 'min:6'],
+                ]);
 
-            $status = Password::reset(
-                $request->only('email', 'password', 'password_confirmation', 'token'),
-                function ($user) use ($request) {
-                    $user->forceFill([
-                        'password' => Hash::make($request->password),
-                    ])->save();
+                $checkIfExists = DB::table('password_resets')
+                    ->where('email', $request->phone_number)
+                    ->where('token', $request->token)
+                    ->where('created_at', '>', Carbon::now()->subMinutes(5)) // 5dk içinde şifre değiştirme yapılmalı
+                    ->first();
 
-                    event(new PasswordReset($user));
+                if (!$checkIfExists) {
+                    return $this->sendError(__('Code is invalid or expired'));
                 }
-            );
 
-            if ($status == Password::PASSWORD_RESET) {
-                return $this->sendResponse(__('Password updated'));
+                // Find user
+                $user = User::where([
+                    'phone_number' => $request->phone_number,
+                    'status' => User::STATUS_ACTIVE
+                ])->firstOrFail();
+
+                // Change password
+                $user->forceFill([
+                    'password' => Hash::make($request->password),
+                ])->save();
+
+                event(new PasswordReset($user));
+
+                return $this->sendResponse(__('Password has been changed'));
+
+            } else {
+                $this->validate($request, [
+                    'token' => 'required',
+                    'email' => 'required|email',
+                    'password' => ['required','confirmed', 'min:6'],
+                ]);
+
+                $status = Password::reset(
+                    $request->only('email', 'password', 'password_confirmation', 'token'),
+                    function ($user) use ($request) {
+                        $user->forceFill([
+                            'password' => Hash::make($request->password),
+                        ])->save();
+
+                        event(new PasswordReset($user));
+                    }
+                );
+
+                if ($status == Password::PASSWORD_RESET) {
+                    return $this->sendResponse(__('Password updated'));
+                }
+
+                throw ValidationException::withMessages([
+                    'email' => [trans($status)],
+                ]);
             }
 
-            throw ValidationException::withMessages([
-                'email' => [trans($status)],
-            ]);
-
         } else {
+            if (config('app.user_identifier') == 'phone_number') {
+                $this->validate($request, [
+                    'phone_number' => 'required',
+                    'token' => 'required'
+                ]);
+
+                $checkIfExists = DB::table('password_resets')
+                    ->where('email', $request->phone_number)
+                    ->where('token', $request->token)
+                    ->where('created_at', '>', Carbon::now()->subSeconds(env('RESET_PASSWORD_EXPIRE_SMS')))
+                    ->first();
+
+                if ($checkIfExists) {
+                    return $this->sendResponse(__('Code is valid'));
+                }
+
+                return $this->sendError(__('Code is invalid or expired'));
+            }
             // Sorun: $token doğrulanmıyor.
           /*  $this->validate($request, [
                 'token' => 'required|string',

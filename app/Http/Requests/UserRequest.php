@@ -8,6 +8,8 @@ use Illuminate\Validation\Rule;
 
 class UserRequest extends FormRequest
 {
+    protected $operation = 'create';
+
     public function authorize()
     {
         return true;
@@ -54,7 +56,8 @@ class UserRequest extends FormRequest
                 Rule::in(User::STATUSES),
             ],
             'role' => [
-                Rule::in(User::ROLES),
+                'required',
+                Rule::in(array_keys(User::ROLES)),
             ]
         ];
 
@@ -70,6 +73,21 @@ class UserRequest extends FormRequest
             $rules['username'][0] = 'required';
         }
 
+        if ($this->operation() === 'update') {
+            // "update" işlemi için ek kurallar !!!test
+
+        }
+
         return $rules;
+    }
+
+    public function setOperation($operation)
+    {
+        $this->operation = $operation;
+    }
+
+    public function operation()
+    {
+        return $this->operation;
     }
 }
