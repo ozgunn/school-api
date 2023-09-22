@@ -20,7 +20,8 @@ class DatabaseSeeder extends Seeder
             CitiesSeeder::class,
             TownsSeeder::class,
             UsersSeeder::class,
-            SchoolsSeeder::class
+            SchoolsSeeder::class,
+            GroupsSeeder::class,
         ]);
     }
 }
