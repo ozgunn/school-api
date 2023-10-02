@@ -26,6 +26,7 @@ class CreateUsersTable extends Migration
             $table->enum('language', config('app.languages'))->default(config('app.locale'));
             $table->tinyInteger('status')->default(0);
             $table->rememberToken();
+            $table->unsignedBiginteger('school_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

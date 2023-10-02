@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('schools', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('parent_id')->nullable();
+            $table->unsignedBigInteger('manager_id')->nullable();
             $table->string('name', 100);
             $table->unsignedInteger('country')->nullable();
             $table->unsignedInteger('city')->nullable();

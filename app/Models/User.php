@@ -56,7 +56,8 @@ class User extends Authenticatable implements JWTSubject, CanResetPassword
         'phone_number',
         'language',
         'role',
-        'status'
+        'status',
+        'school_id'
     ];
 
     protected $guarded = ['id'];
