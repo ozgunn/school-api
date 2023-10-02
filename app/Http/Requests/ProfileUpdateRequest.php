@@ -4,10 +4,9 @@ namespace App\Http\Requests;
 use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\Rule;
 
-class UserRequest extends FormRequest
+class ProfileUpdateRequest extends FormRequest
 {
     protected $operation = 'create';
 
@@ -18,7 +17,7 @@ class UserRequest extends FormRequest
 
     public function rules()
     {
-        $userId = (int) Route::current()->parameter('user');
+        $userId = Auth::id();
 
         $rules = [
             'name' => 'nullable|string|max:50',
@@ -27,20 +26,20 @@ class UserRequest extends FormRequest
                 'nullable',
                 'string',
                 'min:5','max:20',
-                $userId ? Rule::unique('users')->ignore($userId) : Rule::unique('users'),
+                $this->isMethod('put') ? Rule::unique('users')->ignore($userId) : Rule::unique('users'),
             ],
             'email' => [
                 'nullable',
                 'string',
                 'email',
                 'max:255',
-                $userId ? Rule::unique('users')->ignore($userId) : Rule::unique('users'),
+                $this->isMethod('put') ? Rule::unique('users')->ignore($userId) : Rule::unique('users'),
             ],
             'phone_number' => [
                 'nullable',
                 'string',
                 'regex:/^[0-9]{10,12}$/',
-                $userId ? Rule::unique('users')->ignore($userId) : Rule::unique('users'),
+                $this->isMethod('put') ? Rule::unique('users')->ignore($userId) : Rule::unique('users'),
             ],
             'phone_country_code' => [
                 'nullable',
@@ -90,10 +89,5 @@ class UserRequest extends FormRequest
     public function operation()
     {
         return $this->operation;
-    }
-
-    public function withValidator($validator)
-    {
-        $validator->stopOnFirstFailure();
     }
 }

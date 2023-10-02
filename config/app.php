@@ -22,6 +22,7 @@ return [
         'currency' => 'TL',
         'code' => 'TR',
         'phone_code' => '+90',
+        'pageSize' => 10,
     ],
 
     /*

@@ -26,12 +26,19 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign('parent')->references('id')->on('schools')->onDelete('set null');
-            $table->foreign('country')->references('id')->on('def_countries')->onDelete('set null');
-            $table->foreign('city')->references('id')->on('def_cities')->onDelete('set null');
-            $table->foreign('town')->references('id')->on('def_towns')->onDelete('set null');
+
 
         });
+        try {
+            Schema::table('schools', function($table) {
+                $table->foreign('parent')->references('id')->on('schools')->onDelete('set null');
+                $table->foreign('country')->references('id')->on('def_countries')->onDelete('set null');
+                $table->foreign('city')->references('id')->on('def_cities')->onDelete('set null');
+                $table->foreign('town')->references('id')->on('def_towns')->onDelete('set null');
+            });
+        } catch (Exception $exception) {
+
+        }
     }
 
     /**

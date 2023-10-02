@@ -26,6 +26,7 @@ class UserResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'user_data' => $this->getUserData(),
+            'school' => $this->getSchool(),
         ];
     }
 
@@ -48,5 +49,17 @@ class UserResource extends JsonResource
         }
 
         return $userData;
+    }
+
+    public function getSchool()
+    {
+        $school = [];
+        if ($this->school) {
+            $school = [
+                'id' => $this->school->id,
+                'name' => $this->school->name,
+            ];
+        }
+        return $school;
     }
 }

@@ -15,11 +15,17 @@ return new class extends Migration
         Schema::create('def_cities', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('country');
-            $table->foreign('country')->references('id')->on('def_countries')->onDelete('cascade');
             $table->string('name');
             $table->timestamps();
             $table->softDeletes();
         });
+        try {
+            Schema::table('def_cities', function($table) {
+                $table->foreign('country')->references('id')->on('def_countries')->onDelete('cascade');
+            });
+        } catch (Exception $exception) {
+
+        }
     }
 
     /**
