@@ -16,6 +16,8 @@ return [
     'name' => env('APP_NAME', 'School Api'),
     'user_identifier' => env('USER_IDENTIFIER', 'email'),
     'user_auto_approval' => env('USER_AUTO_APPROVAL', true),
+    'server_url' => env('SERVER_URL', 'http://localhost'),
+    'image_path' => env('IMAGE_PATH', '/images'),
 
     'defaults' => [
         'locale' => 'tr',

@@ -46,13 +46,13 @@ class UserController extends BaseController
                 } else {
                     $query->whereIn('school_id', $schools);
                 }
-            })->with('schools');
+            });
         }
 
         if (isset($filters['role'])) {
             $users->where('role', $filters['role']);
         }
-dd($users->get());
+
         $allowedSort = ['id', 'name', 'email', 'created_at'];
         $users = Paginator::sort($request, $users, $allowedSort)->paginate(config('app.defaults.pageSize'));
 

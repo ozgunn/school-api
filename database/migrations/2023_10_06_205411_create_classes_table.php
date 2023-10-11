@@ -11,18 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('groups', function (Blueprint $table) {
+        Schema::create('classes', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBiginteger('school_id')->nullable();
+            $table->unsignedBiginteger('school_id');
+            $table->unsignedBiginteger('group_id');
             $table->string('name');
-            $table->tinyInteger('age_group');
             $table->timestamps();
             $table->softDeletes();
         });
         try {
-            Schema::table('groups', function($table) {
+            Schema::table('classes', function($table) {
                 $table->foreign('school_id')->references('id')
-                    ->on('schools')->onDelete('set null');
+                    ->on('schools')->onDelete('cascade');
+                $table->foreign('group_id')->references('id')
+                    ->on('groups')->onDelete('cascade');
             });
         } catch (Exception $exception) {
 
@@ -34,6 +36,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('groups');
+        Schema::dropIfExists('classes');
     }
 };

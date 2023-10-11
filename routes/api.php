@@ -26,6 +26,8 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::put('profile',  [\App\Http\Controllers\AuthController::class, 'update'])->name('profile-update');
     Route::get('schools', [\App\Http\Controllers\SchoolController::class, 'index'])->name('schools');
     Route::get('schools/{id}', [\App\Http\Controllers\SchoolController::class, 'show'])->name('school');
+    Route::get('students', [\App\Http\Controllers\StudentController::class, 'index'])->name('students');
+    Route::get('students/{id}', [\App\Http\Controllers\StudentController::class, 'show'])->name('student');
 
 /*    Route::group(['middleware' => 'role:100'], function () {
         Route::resource('users', \App\Http\Controllers\UserController::class);
@@ -43,6 +45,7 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::post('schools/{id}/users', [\App\Http\Controllers\Admin\SchoolController::class, 'userAdd'])->name('user-add');
     });
 });
+
 
 
 /*Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
