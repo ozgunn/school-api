@@ -3,32 +3,37 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\SchoolResource;
+use App\Http\Resources\StudentResource;
+use App\Models\Student;
 use Illuminate\Http\Request;
 
-class SchoolController extends BaseController
+class StudentController extends BaseController
 {
     /**
-     * List user's schools
+     * List user's students
      */
     public function index(Request $request)
     {
-        $schools = $this->findUserSchools();
+        $students = Student::where('parent_id', $this->getUser()->id)->get();
 
         $data = [
-            'schools' => SchoolResource::collection($schools),
+            'students' => StudentResource::collection($students),
         ];
 
         return $this->sendResponse($data);
     }
 
     /**
-     * Display user's school
+     * Display user's student
      */
     public function show(int $id)
     {
-        $school = $this->findUserSchool($id);
+        $student = Student::where('parent_id', $this->getUser()->id)
+            ->where('id', $id)
+            ->first();
 
-        $data = new SchoolResource($school);
+
+        $data = new StudentResource($student);
 
         return $this->sendResponse($data);
     }

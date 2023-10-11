@@ -46,7 +46,7 @@ class CompanyController extends BaseController
     {
         $user = auth()->user();
         if ($user->role !== User::ROLE_SUPERADMIN) {
-            return $this->sendError(__('Not allowed'), __('You dont authorized'), 403);
+            return $this->sendError(__('Not allowed'), __('You are unauthorized'), 403);
         }
 
         $validated = $request->validated();
@@ -101,7 +101,7 @@ class CompanyController extends BaseController
     {
         $user = auth()->user();
         if ($user->role !== User::ROLE_SUPERADMIN) {
-            return $this->sendError(__('Not allowed'), __('You dont authorized'), 403);
+            return $this->sendError(__('Not allowed'), __('You are unauthorized'), 403);
         }
 
         $userToAdd = User::where(['id' => $request->get('user_id'), 'role' => User::ROLE_ADMIN])->firstOrFail();

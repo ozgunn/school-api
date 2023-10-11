@@ -13,11 +13,20 @@ return new class extends Migration
     {
         Schema::create('groups', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBiginteger('school_id');
+            $table->unsignedBiginteger('school_id')->nullable();
             $table->string('name');
             $table->tinyInteger('age_group');
             $table->timestamps();
+            $table->softDeletes();
         });
+        try {
+            Schema::table('groups', function($table) {
+                $table->foreign('school_id')->references('id')
+                    ->on('schools')->onDelete('set null');
+            });
+        } catch (Exception $exception) {
+
+        }
     }
 
     /**

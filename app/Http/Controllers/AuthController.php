@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProfileUpdateRequest;
 use App\Http\Requests\UserRequest;
+use App\Http\Resources\SchoolResource;
 use App\Http\Resources\UserResource;
+use App\Http\Resources\UserSchoolResource;
+use App\Http\Resources\UserSchoolsCollection;
 use App\Models\User;
 use App\Services\Sms\Sms;
 use App\Services\Sms\SmsInterface;
@@ -27,7 +31,7 @@ class AuthController extends BaseController
     {
         parent::__construct();
 
-        $this->middleware('auth:api', ['except' => ['login','register','test','resetPassword', 'resetPasswordConfirm']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register', 'test', 'resetPassword', 'resetPasswordConfirm']]);
     }
 
     public function login()
@@ -41,18 +45,24 @@ class AuthController extends BaseController
         if ($token = Auth::attempt($credentials)) {
             $user = Auth::user();
 
+//            $schools = $user->getSchools();
+//            $company = $user->getCompanies();
+
+            $schools = $user->schools()->get();
+
             $data = [
                 'token' => $token,
-                'user' => new UserResource($user)
+                'user' => new UserResource($user),
+                'schools' => new UserSchoolsCollection($schools),
             ];
-            Log::info('login', ['user' => Auth::id(), 'ip'=>\request()->ip()]);
+            Log::info('login', ['user' => Auth::id(), 'ip' => \request()->ip()]);
 
 //            $sms = new SmsModel('+905422212549', 'MD deneme1');
 //            $sms->send();
 
             return $this->sendResponse($data, __('Logged in successfully!'));
         } else {
-            Log::error('login', ['user' => request($this->userIdentifier), 'ip'=>\request()->ip()]);
+            Log::error('login', ['user' => request($this->userIdentifier), 'ip' => \request()->ip()]);
 
             return $this->sendError(__('Login failed!'));
         }
@@ -72,11 +82,11 @@ class AuthController extends BaseController
                 'token' => $token,
                 'user' => new UserResource($user)
             ];
-            Log::info('register', ['user' => $user->id, 'ip'=>\request()->ip()]);
+            Log::info('register', ['user' => $user->id, 'ip' => \request()->ip()]);
 
             return $this->sendResponse($data, 'User created successfully.');
         } else {
-            Log::error('register', ['user' => request($this->userIdentifier), 'ip'=>\request()->ip()]);
+            Log::error('register', ['user' => request($this->userIdentifier), 'ip' => \request()->ip()]);
 
             return $this->sendError(__('Error on registration'));
         }
@@ -85,15 +95,21 @@ class AuthController extends BaseController
     public function profile()
     {
         $user = Auth::user();
+        $schools = $user->schools()->get();
 
-        return $this->sendResponse(new UserResource($user));
+        $data = [
+            'user' => new UserResource($user),
+            'schools' => new UserSchoolsCollection($schools),
+        ];
+
+        return $this->sendResponse($data);
 
     }
 
     /**
      * Update current user.
      */
-    public function update(UserRequest $request)
+    public function update(ProfileUpdateRequest $request)
     {
         /** @var User $user */
         $user = Auth::user();
@@ -109,7 +125,7 @@ class AuthController extends BaseController
         }
 
         $user->save();
-        Log::info('profile update', ['user' => $user->id , 'ip'=>\request()->ip()]);
+        Log::info('profile update', ['user' => $user->id, 'ip' => \request()->ip()]);
 
         return $this->sendResponse(new UserResource($user), __('User updated successfully.'));
     }
@@ -138,8 +154,8 @@ class AuthController extends BaseController
                 'created_at' => Carbon::now()
             ]);
 
-            $to = config('app.defaults.phone_code').$request->phone_number;
-            $message = __("Your password reset code: ").$token;
+            $to = config('app.defaults.phone_code') . $request->phone_number;
+            $message = __("Your password reset code: ") . $token;
 
             // Send sms
             //$sms = new SmsModel($to, $message);
@@ -154,7 +170,7 @@ class AuthController extends BaseController
             ]);
 
             ResetPassword::createUrlUsing(function (User $user, string $token) {
-                return config('app.url').'/reset-password?token='.$token;
+                return config('app.url') . '/reset-password?token=' . $token;
             });
 
             $status = Password::sendResetLink(
@@ -175,7 +191,7 @@ class AuthController extends BaseController
                 $this->validate($request, [
                     'token' => 'required',
                     'phone_number' => 'required',
-                    'password' => ['required','confirmed', 'min:6'],
+                    'password' => ['required', 'confirmed', 'min:6'],
                 ]);
 
                 $checkIfExists = DB::table('password_resets')
@@ -207,7 +223,7 @@ class AuthController extends BaseController
                 $this->validate($request, [
                     'token' => 'required',
                     'email' => 'required|email',
-                    'password' => ['required','confirmed', 'min:6'],
+                    'password' => ['required', 'confirmed', 'min:6'],
                 ]);
 
                 $status = Password::reset(
@@ -250,26 +266,26 @@ class AuthController extends BaseController
                 return $this->sendError(__('Code is invalid or expired'));
             }
             // Sorun: $token doğrulanmıyor.
-          /*  $this->validate($request, [
-                'token' => 'required|string',
-            ]);
+            /*  $this->validate($request, [
+                  'token' => 'required|string',
+              ]);
 
-            $token = $request->get('token');
+              $token = $request->get('token');
 
-            dd(Password::getUser(['token' => $token]));
+              dd(Password::getUser(['token' => $token]));
 
-            $resetToken = DB::table('password_resets')
-                ->where('token', bcrypt($token))
-                ->first();
+              $resetToken = DB::table('password_resets')
+                  ->where('token', bcrypt($token))
+                  ->first();
 
-            dd($resetToken, $token, bcrypt($token));*/
+              dd($resetToken, $token, bcrypt($token));*/
 
         }
     }
 
     public function test()
     {
-        $data =  [
+        $data = [
             'message' => 'test OK',
             'lang' => App::getLocale(),
             'test' => __('test', ['lang' => App::getLocale()])

@@ -16,13 +16,18 @@ return new class extends Migration
             $table->unsignedBiginteger('school_id');
             $table->unsignedBiginteger('user_id');
             $table->tinyInteger('role');
-
-            $table->foreign('school_id')->references('id')
-                ->on('schools')->onDelete('cascade');
-            $table->foreign('user_id')->references('id')
-                ->on('users')->onDelete('cascade');
             $table->timestamps();
         });
+        try {
+            Schema::table('school_user', function($table) {
+                $table->foreign('school_id')->references('id')
+                    ->on('schools')->onDelete('cascade');
+                $table->foreign('user_id')->references('id')
+                    ->on('users')->onDelete('cascade');
+            });
+        } catch (Exception $exception) {
+
+        }
     }
 
     /**
