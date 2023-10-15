@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\DailyResource;
 use App\Http\Resources\SchoolResource;
 use App\Http\Resources\StudentResource;
 use App\Models\Student;
