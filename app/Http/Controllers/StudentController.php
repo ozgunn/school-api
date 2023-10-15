@@ -38,6 +38,61 @@ class StudentController extends BaseController
         return $this->sendResponse($data);
     }
 
+    public function daily(int $id)
+    {
+        $arr = [
+            'id' => 1,
+            'date' => '2023-10-16',
+            'mood' => (object)[
+                'title' => 'Bugün Ben',
+                'items' => (object)[
+                    'Mutluydum',
+                    'Katılımcıydım',
+                    'Hareketliydim',
+                ],
+            ],
+            'activity' => (object)[
+                'title' => 'Bugün Yaptıklarım',
+                'items' => (object)[
+                    'Serbest Oyun',
+                    'Parmak Boyama',
+                    'Akıl Oyunları',
+                    'Müzik',
+                ],
+            ],
+            'meal' => (object)[
+                'title' => 'Yemek',
+                'items' => (object)[
+                    [
+                        'title' => 'Kahvaltı',
+                        'value' => 0,
+                        'value_text' => 'Hiç',
+                    ],
+                    [
+                        'title' => 'Öğle Yemeği',
+                        'value' => 1,
+                        'value_text' => 'Biraz',
+                    ],
+                    [
+                        'title' => 'İkindi',
+                        'value' => 3,
+                        'value_text' => 'Tamamı',
+                    ],
+                ],
+            ],
+            'sleep' => (object)[
+                'title' => 'Uyku',
+                'value' => true,
+            ],
+            'note' => 'Çok katılımcıydı',
+        ];
+
+        $data = new DailyResource((object)$arr);
+
+        return $this->sendResponse($data);
+
+    }
+
     private function findUserSchools()
     {
         $user = auth()->user();
