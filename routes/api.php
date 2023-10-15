@@ -28,6 +28,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('schools/{id}', [\App\Http\Controllers\SchoolController::class, 'show'])->name('school');
     Route::get('students', [\App\Http\Controllers\StudentController::class, 'index'])->name('students');
     Route::get('students/{id}', [\App\Http\Controllers\StudentController::class, 'show'])->name('student');
+    Route::get('students/{id}/daily', [\App\Http\Controllers\StudentController::class, 'daily'])->name('student.daily');
 
 /*    Route::group(['middleware' => 'role:100'], function () {
         Route::resource('users', \App\Http\Controllers\UserController::class);
