@@ -5,19 +5,19 @@ namespace App\Models;
 use Carbon\Traits\Timestamp;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property integer $id
- * @property integer $school_id
- * @property integer $group_id
- * @property string $name
+ * @property integer $announcement_id
+ * @property integer $student_id
+ * @property integer $teacher_id
+ * @property \DateTime $read_at
  */
-class SchoolClass extends Model
+class AnnouncementRecipient extends Model
 {
-    use HasFactory, Timestamp, SoftDeletes;
+    use HasFactory, Timestamp;
 
-    protected $table = 'classes';
+    protected $table = 'announcement_recipients';
 
     /**
      * The attributes that are mass assignable.
@@ -25,9 +25,10 @@ class SchoolClass extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'school_id',
-        'group_id',
-        'name',
+        'announcement_id',
+        'student_id',
+        'teacher_id',
+        'read_at',
     ];
 
     protected $guarded = ['id'];
@@ -48,16 +49,15 @@ class SchoolClass extends Model
     protected $casts = [
     ];
 
-    public function school() {
-        return $this->belongsTo(School::class, 'school_id', 'id');
+    public function announcement() {
+        return $this->belongsTo(Announcement::class, 'announcement_id', 'id');
     }
 
-    public function group() {
-        return $this->belongsTo(Group::class, 'group_id', 'id');
+    public function student() {
+        return $this->belongsTo(Student::class, 'student_id', 'id');
     }
 
-    public function students()
-    {
-        return $this->hasMany(Student::class, 'class_id', 'id');
+    public function teacher() {
+        return $this->belongsTo(User::class, 'teacher_id', 'id');
     }
 }

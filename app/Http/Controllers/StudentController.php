@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\DailyResource;
 use App\Http\Resources\SchoolResource;
 use App\Http\Resources\StudentResource;
 use App\Models\Student;
@@ -43,26 +44,26 @@ class StudentController extends BaseController
         $arr = [
             'id' => 1,
             'date' => '2023-10-16',
-            'mood' => (object)[
+            'mood' => [
                 'title' => 'Bugün Ben',
-                'items' => (object)[
+                'items' => [
                     'Mutluydum',
                     'Katılımcıydım',
                     'Hareketliydim',
                 ],
             ],
-            'activity' => (object)[
+            'activity' => [
                 'title' => 'Bugün Yaptıklarım',
-                'items' => (object)[
+                'items' => [
                     'Serbest Oyun',
                     'Parmak Boyama',
                     'Akıl Oyunları',
                     'Müzik',
                 ],
             ],
-            'meal' => (object)[
+            'meal' => [
                 'title' => 'Yemek',
-                'items' => (object)[
+                'items' => [
                     [
                         'title' => 'Kahvaltı',
                         'value' => 0,
@@ -80,7 +81,7 @@ class StudentController extends BaseController
                     ],
                 ],
             ],
-            'sleep' => (object)[
+            'sleep' => [
                 'title' => 'Uyku',
                 'value' => true,
             ],
