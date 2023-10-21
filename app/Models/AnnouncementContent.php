@@ -5,19 +5,22 @@ namespace App\Models;
 use Carbon\Traits\Timestamp;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property integer $id
- * @property integer $school_id
- * @property string $name
- * @property integer $age_group
+ * @property integer $announcement_id
+ * @property string $lang
+ * @property string $content
+ * @property \DateTime $created_at
  */
-class Group extends Model
+class AnnouncementContent extends Model
 {
-    use HasFactory, Timestamp, SoftDeletes;
+    use HasFactory, Timestamp;
 
-    protected $table = 'groups';
+    const LANG_TR = 'tr';
+    const LANG_EN = 'en';
+
+    protected $table = 'announcement_content';
 
     /**
      * The attributes that are mass assignable.
@@ -25,9 +28,9 @@ class Group extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'school_id',
-        'name',
-        'age_group',
+        'announcement_id',
+        'lang',
+        'content',
     ];
 
     protected $guarded = ['id'];
@@ -48,12 +51,8 @@ class Group extends Model
     protected $casts = [
     ];
 
-    public function school() {
-        return $this->belongsTo(School::class, 'school_id', 'id');
+    public function announcement() {
+        return $this->belongsTo(Announcement::class, 'announcement_id', 'id');
     }
 
-    public function classes()
-    {
-        return $this->hasMany(SchoolClass::class, 'group_id', 'id');
-    }
 }

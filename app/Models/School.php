@@ -106,4 +106,9 @@ class School extends Model
         return $this->belongsToMany(User::class, 'school_user')
             ->wherePivot('role', User::ROLE_PARENT);
     }
+
+    public function students()
+    {
+        return $this->hasMany(Student::class, 'school_id', 'id');
+    }
 }
