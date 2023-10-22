@@ -1,3 +1,8 @@
 {
-    "Logged in successfully!": "Giriş başarılı"
+    "Logged in successfully!": "Giriş başarılı",
+    "Yemek": "Yemek",
+
+    "first_meal": "Kahvaltı",
+    "second_meal": "Öğle",
+    "third_meal": "İkindi"
 }

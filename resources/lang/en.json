@@ -1,3 +1,19 @@
 {
-    "test": "test :lang"
+    "Logged in successfully!": "Logged in successfully!",
+    "Yemek": "I Ate",
+    "Bugün Ben": "Today I Was",
+    "Bugün Yaptıklarım": "Today I Had",
+    "Uyku": "I Slept",
+    "Kahvaltı": "Breakfast",
+    "Öğle": "Lunch",
+    "İkindi": "Snack Time",
+    "Evet": "Yes",
+    "Hayır": "No",
+    "Hepsi": "All",
+    "Biraz": "Some",
+    "Hiç": "None",
+
+    "first_meal": "Breakfast",
+    "second_meal": "Lunch",
+    "third_meal": "Snack Time"
 }

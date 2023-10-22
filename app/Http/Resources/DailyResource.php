@@ -33,19 +33,19 @@ class DailyResource extends JsonResource
 
         $responseData = [
             'mood' => [
-                'title' => 'Bugün Ben',
+                'title' => trans('Bugün Ben'),
                 'items' => []
             ],
             'activity' => [
-                'title' => 'Bugün Yaptıklarım',
+                'title' => trans('Bugün Yaptıklarım'),
                 'items' => []
             ],
             'meal' => [
-                'title' => 'Yemek',
+                'title' => trans('Yemek'),
                 'items' => []
             ],
             'sleep' => [
-                'title' => 'Uyku',
+                'title' => trans('Uyku'),
                 'items' => []
             ],
         ];
@@ -55,19 +55,19 @@ class DailyResource extends JsonResource
         foreach ($dailyNotes as $note) {
             switch ($note->parent->type) {
                 case 'mood':
-                    $responseData['mood']['items'][] = $note->option;
+                    $responseData['mood']['items'][] = trans($note->option);
                     break;
                 case 'activity':
-                    $responseData['activity']['items'][] = $note->option;
+                    $responseData['activity']['items'][] = trans($note->option);
                     break;
                 case 'sleep':
                     unset($responseData['sleep']['items']);
-                    $responseData['sleep']['value'] = $note->option;
+                    $responseData['sleep']['value'] = trans($note->option);
                     break;
                 case 'food':
                     $responseData['meal']['items'][] = [
-                        'title' => $note->parent->title,
-                        'value' => $note->option,
+                        'title' => trans($note->parent->title),
+                        'value' => trans($note->option),
                     ];
                     break;
             }
