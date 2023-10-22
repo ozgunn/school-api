@@ -15,7 +15,8 @@ class Localization
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $local = ($request->hasHeader('X-locale')) ? $request->header('X-locale') : 'en';
+        $local = ($request->hasHeader('X-locale')) ? $request->header('X-locale') :
+            (auth()->user()->language ?? 'en');
         app()->setLocale($local);
         return $next($request);
     }
