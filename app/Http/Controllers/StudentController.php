@@ -3,9 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\DailyResource;
-use App\Http\Resources\SchoolResource;
 use App\Http\Resources\StudentResource;
-use App\Models\Student;
+use App\Models\DailyReport;
 use Illuminate\Http\Request;
 
 class StudentController extends BaseController
@@ -15,7 +14,9 @@ class StudentController extends BaseController
      */
     public function index(Request $request)
     {
-        $students = Student::where('parent_id', $this->getUser()->id)->get();
+        $user = auth()->user();
+
+        $students = $user->getParentsStudents();
 
         $data = [
             'students' => StudentResource::collection($students),
@@ -29,10 +30,9 @@ class StudentController extends BaseController
      */
     public function show(int $id)
     {
-        $student = Student::where('parent_id', $this->getUser()->id)
-            ->where('id', $id)
-            ->first();
+        $user = auth()->user();
 
+        $student = $user->getParentsStudent();
 
         $data = new StudentResource($student);
 
@@ -41,70 +41,15 @@ class StudentController extends BaseController
 
     public function daily(int $id)
     {
-        $arr = [
-            'id' => 1,
-            'date' => '2023-10-16',
-            'mood' => [
-                'title' => 'Bugün Ben',
-                'items' => [
-                    'Mutluydum',
-                    'Katılımcıydım',
-                    'Hareketliydim',
-                ],
-            ],
-            'activity' => [
-                'title' => 'Bugün Yaptıklarım',
-                'items' => [
-                    'Serbest Oyun',
-                    'Parmak Boyama',
-                    'Akıl Oyunları',
-                    'Müzik',
-                ],
-            ],
-            'meal' => [
-                'title' => 'Yemek',
-                'items' => [
-                    [
-                        'title' => 'Kahvaltı',
-                        'value' => 0,
-                        'value_text' => 'Hiç',
-                    ],
-                    [
-                        'title' => 'Öğle Yemeği',
-                        'value' => 1,
-                        'value_text' => 'Biraz',
-                    ],
-                    [
-                        'title' => 'İkindi',
-                        'value' => 3,
-                        'value_text' => 'Tamamı',
-                    ],
-                ],
-            ],
-            'sleep' => [
-                'title' => 'Uyku',
-                'value' => true,
-            ],
-            'note' => 'Çok katılımcıydı',
-        ];
+        $user = auth()->user();
 
-        $data = new DailyResource((object)$arr);
+        $student = $user->getParentsStudent();
+
+        $report = DailyReport::where(['student_id' => $student->id, 'date' => now()->toDateString()])->first();
+
+        $data = new DailyResource($report);
 
         return $this->sendResponse($data);
 
-    }
-
-    private function findUserSchools()
-    {
-        $user = auth()->user();
-
-        return $user->getSchools();
-    }
-
-    private function findUserSchool(int $id)
-    {
-        $user = auth()->user();
-
-        return $user->schools()->whereNotNull('parent_id')->where(['school_id' => $id])->firstOrFail();
     }
 }

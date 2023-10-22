@@ -47,22 +47,13 @@ class AnnouncementController extends BaseController
             }])
             ->firstOrFail();
 
+        // Mark as read
+        $announcement->read_at = new \DateTime();
+        $announcement->save();
+
         $data = new AnnouncementResource($announcement);
 
         return $this->sendResponse($data);
     }
 
-    private function findUserSchools()
-    {
-        $user = auth()->user();
-
-        return $user->getSchools();
-    }
-
-    private function findUserSchool(int $id)
-    {
-        $user = auth()->user();
-
-        return $user->schools()->whereNotNull('parent_id')->where(['school_id' => $id])->firstOrFail();
-    }
 }
