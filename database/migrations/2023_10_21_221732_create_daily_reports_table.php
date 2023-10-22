@@ -16,7 +16,9 @@ return new class extends Migration
             $table->unsignedBiginteger('student_id');
             $table->unsignedBiginteger('school_id')->nullable();
             $table->unsignedBiginteger('class_id')->nullable();
+            $table->unsignedBiginteger('user_id')->nullable();
             $table->string('selected_notes')->nullable();
+            $table->string('note')->nullable();
             $table->timestamp('date')->nullable();
             $table->timestamp('read_at')->nullable();
             $table->timestamp('confirmed_at')->nullable();
@@ -31,6 +33,8 @@ return new class extends Migration
                     ->on('classes');
                 $table->foreign('school_id')->references('id')
                     ->on('schools');
+                $table->foreign('user_id')->references('id')
+                    ->on('users');
             });
         } catch (Exception $exception) {
 
