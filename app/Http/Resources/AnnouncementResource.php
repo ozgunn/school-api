@@ -38,8 +38,6 @@ class AnnouncementResource extends JsonResource
             ];
         }
 
-
-
         return $response;
     }
 

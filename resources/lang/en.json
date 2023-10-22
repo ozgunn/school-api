@@ -11,5 +11,9 @@
     "Hayır": "No",
     "Hepsi": "All",
     "Biraz": "Some",
-    "Hiç": "None"
+    "Hiç": "None",
+
+    "first_meal": "Breakfast",
+    "second_meal": "Lunch",
+    "third_meal": "Snack Time"
 }

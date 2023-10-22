@@ -14,7 +14,7 @@ class AnnouncementController extends BaseController
     public function index(Request $request)
     {
         $user = auth()->user();
-        $userLang = $user->language ?? config('app.defaults.locale');
+        $userLang = app()->getLocale();
 
         $student = $user->getParentsStudent();
 
@@ -37,7 +37,7 @@ class AnnouncementController extends BaseController
     public function show(int $id)
     {
         $user = auth()->user();
-        $userLang = $user->language ?? config('app.defaults.locale');
+        $userLang = app()->getLocale();
 
         $student = $user->getParentsStudent();
 
