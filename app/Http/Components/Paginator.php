@@ -7,14 +7,15 @@ use Illuminate\Http\Request;
 
 class Paginator
 {
-    public static function sort(Request $request, Builder $qb, array $allowed): Builder
+    public static function sort(Request $request, Builder $qb, array $allowed, $defaultSortDir='asc'): Builder
     {
         $orderBy = $request->get('order', 'id');
         if (!in_array($orderBy, $allowed)) {
             $orderBy = 'id';
         }
 
-        $sort = $request->get('sort', 'asc');
+        $sort = $request->get('sort') ?? $defaultSortDir;
+
         if (!in_array(strtolower($sort), ['asc','desc'])) {
             $sort = 'asc';
         }
