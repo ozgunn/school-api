@@ -42,7 +42,7 @@ class MessageController extends BaseController
 
         $student = $user->getParentsStudent();
 
-        $teacher_id = $student->class->teacher->id;
+        $teacher_id = $student->class->teacher_id;
 
         $query = Message::where(['teacher_id' => $teacher_id, 'student_id' => $student->id]);
 
