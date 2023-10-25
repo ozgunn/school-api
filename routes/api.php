@@ -35,6 +35,10 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('foods/{date}', [\App\Http\Controllers\FoodMenuController::class, 'show'])->name('food-menu.date');
     Route::get('school-bus', [\App\Http\Controllers\BusController::class, 'index'])->name('buses');
     Route::get('school-bus/{time}', [\App\Http\Controllers\BusController::class, 'index'])->name('buses.time');
+    Route::get('messages/school', [\App\Http\Controllers\MessageController::class, 'school'])->name('messages.school');
+    Route::get('messages/teacher', [\App\Http\Controllers\MessageController::class, 'teacher'])->name('messages.teacher');
+    Route::post('messages/school', [\App\Http\Controllers\MessageController::class, 'schoolStore'])->name('messages.school.store');
+    Route::post('messages/teacher', [\App\Http\Controllers\MessageController::class, 'teacherStore'])->name('messages.teacher.store');
 
 /*    Route::group(['middleware' => 'role:100'], function () {
         Route::resource('users', \App\Http\Controllers\UserController::class);

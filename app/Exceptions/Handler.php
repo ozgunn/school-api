@@ -7,6 +7,7 @@ use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
@@ -46,12 +47,29 @@ class Handler extends ExceptionHandler
 
     public function render($request, Throwable $e)
     {
+        $response = [
+            'success' => false,
+            'error' => 'An error occurred',
+            'errorMsg' => $e->getMessage()
+        ];
+        $code = 500;
+
         if ($e instanceof NotFoundHttpException) {
-            return response()->json(['error' => 'Resource not found'], 404);
+            $response['error'] = 'Resource not found';
+            $response['errorMsg'] = $e->getMessage();
+            $code = 404;
         }
 
         if ($e instanceof ValidationException) {
-            return response()->json(['error' => 'Validation error', 'errorMsg' => $e->validator->errors()], 422);
+            $response['error'] = 'Validation error';
+            $response['errorMsg'] = $e->validator->errors();
+            $code = 422;
+        }
+
+        if ($e instanceof NotAcceptableHttpException) {
+            $response['error'] = 'Not allowed';
+            $response['errorMsg'] = $e->getMessage();
+            $code = 406;
         }
 
         if ($e instanceof AuthenticationException) {
@@ -66,9 +84,6 @@ class Handler extends ExceptionHandler
             return response()->json(['error' => 'Not found', 'errorMsg' => $e->getMessage()], 404);
         }
 
-        return response()->json([
-            'error' => 'An error occurred',
-            'errorMsg' => $e->getMessage()
-        ], 500);
+        return response()->json($response, $code);
     }
 }

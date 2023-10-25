@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property integer $id
  * @property integer $school_id
  * @property integer $group_id
+ * @property integer $teacher_id
  * @property string $name
  */
 class SchoolClass extends Model
@@ -27,6 +28,7 @@ class SchoolClass extends Model
     protected $fillable = [
         'school_id',
         'group_id',
+        'teacher_id',
         'name',
     ];
 
@@ -49,11 +51,15 @@ class SchoolClass extends Model
     ];
 
     public function school() {
-        return $this->belongsTo(School::class, 'school_id', 'id');
+        return $this->belongsTo(School::class);
     }
 
     public function group() {
-        return $this->belongsTo(Group::class, 'group_id', 'id');
+        return $this->belongsTo(Group::class);
+    }
+
+    public function teacher() {
+        return $this->belongsTo(User::class);
     }
 
     public function students()
