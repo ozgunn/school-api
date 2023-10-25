@@ -59,7 +59,7 @@ class FoodMenuController extends BaseController
             ->first();
 
         $data = [
-            'menu' => new FoodMenuResource($menu),
+            'menu' => $menu ? new FoodMenuResource($menu) : [],
         ];
 
         return $this->sendResponse($data);

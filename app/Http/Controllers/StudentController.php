@@ -16,7 +16,7 @@ class StudentController extends BaseController
     {
         $user = auth()->user();
 
-        $students = $user->getParentsStudents();
+        $students = $user->getParentsStudents()->get();
 
         $data = [
             'students' => StudentResource::collection($students),

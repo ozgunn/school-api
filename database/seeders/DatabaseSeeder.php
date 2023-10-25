@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
             DailyNotesSeeder::class,
             DailyReportsSeeder::class,
             FoodMenuSeeder::class,
+            BusSeeder::class,
         ]);
     }
 }
