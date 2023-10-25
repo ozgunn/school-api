@@ -38,7 +38,6 @@ class Kernel extends HttpKernel
             'throttle:api',
             'localization',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
-            \Barryvdh\Debugbar\Middleware\InjectDebugbar::class,
         ],
     ];
 
