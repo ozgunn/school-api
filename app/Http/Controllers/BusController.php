@@ -18,12 +18,13 @@ class BusController extends BaseController
         $user = auth()->user();
 
         $student = $user->getParentsStudent();
+        $data = null;
 
-        if ($time && $time === 1)
-            $data = new BusResource($student->getMorningBus()->first());
-        else if ($time && $time == 2)
+        if ($time && $time === 1 && $student->getMorningBus())
+            $data =  new BusResource($student->getMorningBus()->first());
+        else if ($time && $time == 2 && $student->getEveningBus())
             $data = new BusResource($student->getEveningBus()->first());
-        else
+        else if (!empty($student->getBuses()))
             $data = BusResource::collection($student->getBuses());
 
         return $this->sendResponse($data);
