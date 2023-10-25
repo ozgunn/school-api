@@ -111,4 +111,11 @@ class School extends Model
     {
         return $this->hasMany(Student::class, 'school_id', 'id');
     }
+
+    public function buses()
+    {
+        return $this->hasMany(Bus::class, 'school_id', 'id');
+    }
+
+
 }

@@ -66,4 +66,22 @@ class Student extends Model
     public function parent() {
         return $this->belongsTo(User::class, 'parent_id', 'id');
     }
+
+    public function getMorningBus()
+    {
+        return $this->belongsTo(Bus::class, 'morning_bus_id', 'id');
+    }
+
+    public function getEveningBus()
+    {
+        return $this->belongsTo(Bus::class, 'evening_bus_id', 'id');
+    }
+
+    public function getBuses()
+    {
+        return [
+            $this->getMorningBus()->first(),
+            $this->getEveningBus()->first(),
+        ];
+    }
 }
