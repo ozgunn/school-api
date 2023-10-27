@@ -39,6 +39,9 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('messages/teacher', [\App\Http\Controllers\MessageController::class, 'teacher'])->name('messages.teacher');
     Route::post('messages/school', [\App\Http\Controllers\MessageController::class, 'schoolStore'])->name('messages.school.store');
     Route::post('messages/teacher', [\App\Http\Controllers\MessageController::class, 'teacherStore'])->name('messages.teacher.store');
+    Route::get('pdfs/parent', [\App\Http\Controllers\FilesController::class, 'parent'])->name('pdfs.parent');
+    Route::get('pdfs/group', [\App\Http\Controllers\FilesController::class, 'group'])->name('pdfs.group');
+
 
 /*    Route::group(['middleware' => 'role:100'], function () {
         Route::resource('users', \App\Http\Controllers\UserController::class);
