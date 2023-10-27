@@ -30,6 +30,7 @@ class DatabaseSeeder extends Seeder
             FoodMenuSeeder::class,
             BusSeeder::class,
             MessagesSeeder::class,
+            FilesSeeder::class,
         ]);
     }
 }
