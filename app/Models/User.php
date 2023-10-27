@@ -20,11 +20,16 @@ use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
  * @property string $role
  * @property string $password
  * @property integer $status
+ * @property string $image
  */
 
 class User extends Authenticatable implements JWTSubject, CanResetPassword
 {
     use HasFactory, Notifiable, SoftDeletes;
+
+    const PATH = '/images/user/';
+    const IMAGE_DEFAULT_USER = 'default-user.png';
+    const IMAGE_DEFAULT_TEACHER = 'default-teacher.png';
 
     const STATUS_PASSIVE = 0;
     const STATUS_ACTIVE = 10;
@@ -146,6 +151,11 @@ class User extends Authenticatable implements JWTSubject, CanResetPassword
     public function getParentsStudent()
     {
         return $this->getParentsStudents()->first();
+    }
+
+    public function getFullName()
+    {
+        return $this->userData->getFullName();
     }
 
 }
