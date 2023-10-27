@@ -38,8 +38,11 @@ class FilesController extends BaseController
 
         $school = $user->getSchool();
 
+        $group_id = $user->getParentsStudent()->class->group_id;
+
         $pdfs = Files::where('type', Files::TYPE_PDF_GROUPS)
             ->where('school_id', $school->id)
+            ->where('group_id', $group_id)
             ->orderByDesc('publish_year')
             ->orderByDesc('publish_month')
             ->limit(12)
