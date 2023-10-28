@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\DailyResource;
 use App\Http\Resources\StudentResource;
-use App\Models\DailyReport;
 use Illuminate\Http\Request;
 
 class StudentController extends BaseController
@@ -39,17 +37,4 @@ class StudentController extends BaseController
         return $this->sendResponse($data);
     }
 
-    public function daily(int $id)
-    {
-        $user = auth()->user();
-
-        $student = $user->getParentsStudent();
-
-        $report = DailyReport::where(['student_id' => $student->id, 'date' => now()->toDateString()])->first();
-
-        $data = new DailyResource($report);
-
-        return $this->sendResponse($data);
-
-    }
 }
