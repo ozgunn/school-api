@@ -65,8 +65,7 @@ class MessageController extends BaseController
 
         $validated = $request->validated();
 
-        if ($validated['teacher_id'] !== $teacher_id)
-            throw new NotAcceptableHttpException();
+        $validated['teacher_id'] = $teacher_id;
 
         $validated['user_id'] = $user->id;
         $validated['student_id'] = $student->id;
@@ -85,8 +84,7 @@ class MessageController extends BaseController
         $school_id = $student->school_id;
 
         $validated = $request->validated();
-        if ($validated['school_id'] !== $school_id)
-            throw new NotAcceptableHttpException();
+        $validated['school_id'] = $school_id;
 
         $validated['user_id'] = $user->id;
         $validated['student_id'] = $student->id;
