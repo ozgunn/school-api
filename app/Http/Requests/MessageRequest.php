@@ -20,15 +20,15 @@ class MessageRequest extends FormRequest
             'message' => 'required|string|min:1|max:1024',
         ];
 
-        if (str_contains($this->getPathInfo(), 'teacher')) {
-            $rules['teacher_id'] = ['required', 'integer',
-                Rule::exists('users', 'id')->where(function ($query) {
-                    return $query->where('role', User::ROLE_TEACHER);
-                }),
-            ];
-        } else if (str_contains($this->getPathInfo(), 'school')) {
-            $rules['school_id'] = 'required|integer|exists:schools,id';
-        }
+//        if (str_contains($this->getPathInfo(), 'teacher')) {
+//            $rules['teacher_id'] = ['required', 'integer',
+//                Rule::exists('users', 'id')->where(function ($query) {
+//                    return $query->where('role', User::ROLE_TEACHER);
+//                }),
+//            ];
+//        } else if (str_contains($this->getPathInfo(), 'school')) {
+//            $rules['school_id'] = 'required|integer|exists:schools,id';
+//        }
 
         return $rules;
     }
