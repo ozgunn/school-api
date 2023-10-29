@@ -43,6 +43,8 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('messages/teacher', [\App\Http\Controllers\MessageController::class, 'teacherStore'])->name('messages.teacher.store');
     Route::get('pdfs/parent', [\App\Http\Controllers\FilesController::class, 'parent'])->name('pdfs.parent');
     Route::get('pdfs/group', [\App\Http\Controllers\FilesController::class, 'group'])->name('pdfs.group');
+    Route::get('media', [\App\Http\Controllers\MediaController::class, 'index'])->name('media');
+    Route::get('media/{id}', [\App\Http\Controllers\MediaController::class, 'show'])->name('media.show');
 
 
 /*    Route::group(['middleware' => 'role:100'], function () {
