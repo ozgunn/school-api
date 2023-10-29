@@ -24,7 +24,7 @@ class Media extends Model
 {
     use HasFactory, Timestamp, SoftDeletes;
 
-    const PATH = "/media/";
+    const PATH = "/images/media/";
     const TYPE_PHOTO = '1';
     const TYPE_VIDEO = '2';
 
