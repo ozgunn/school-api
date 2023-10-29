@@ -35,7 +35,7 @@ class MediaController extends BaseController
             return $group->map(function ($photo) {
                 return new MediaResource($photo);
             });
-        });
+        })->values();
 
         return $this->sendResponse($data);
     }

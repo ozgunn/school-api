@@ -16,6 +16,7 @@ class MediaResource extends JsonResource
     public function toArray(Request $request): array
     {
         $response = [
+            'day' => date('Y-m-d', strtotime($this->publish_date)),
             'id' => $this->id,
             'type' => Media::TYPES[$this->type],
             'file' => $this->file,
