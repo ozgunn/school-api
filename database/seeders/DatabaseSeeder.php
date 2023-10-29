@@ -31,6 +31,7 @@ class DatabaseSeeder extends Seeder
             BusSeeder::class,
             MessagesSeeder::class,
             FilesSeeder::class,
+            MediaSeeder::class,
         ]);
     }
 }

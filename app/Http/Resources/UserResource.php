@@ -27,6 +27,7 @@ class UserResource extends JsonResource
             'updated_at' => $this->updated_at,
             'user_data' => $this->getUserData(),
             'school' => $this->getSchoolData(),
+            'image' => $this->getProfileImageUrl(),
         ];
     }
 

@@ -26,9 +26,19 @@ class StudentResource extends JsonResource
             'class_id' => $this->class_id,
             'class' => $this->class ? $this->class->name : null,
             'parent_id' => $this->parent_id,
+            'teacher' => $this->getTeacher(),
         ];
 
         return $response;
+    }
+
+    public function getTeacher()
+    {
+        return [
+            'id' => $this->class->teacher_id,
+            'name' => $this->class->teacher->getFullName(),
+            'image' => $this->class->teacher->getProfileImageUrl(),
+        ];
     }
 
 }

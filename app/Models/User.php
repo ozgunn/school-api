@@ -159,4 +159,16 @@ class User extends Authenticatable implements JWTSubject, CanResetPassword
         return $this->userData->getFullName();
     }
 
+    public function getProfileImageUrl()
+    {
+        $prefix = config('app.url');
+        if ($this->image) {
+            $fileUrl = $prefix . self::PATH . $this->image;
+        } else {
+            $defaultImage = ($this->role == User::ROLE_TEACHER) ? self::IMAGE_DEFAULT_TEACHER : self::IMAGE_DEFAULT_USER;
+            $fileUrl = $prefix . self::PATH . $defaultImage;
+        }
+        return $fileUrl;
+    }
+
 }
