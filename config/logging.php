@@ -50,8 +50,14 @@ return [
     'channels' => [
         'stack' => [
             'driver' => 'stack',
-            'channels' => ['single'],
+            'channels' => ['daily', 'stderr', 'db'],
             'ignore_exceptions' => false,
+        ],
+
+        'db' => [
+            'driver' => 'custom',
+            'via' => App\Services\DatabaseLogger::class,
+            'level' => env('LOG_LEVEL', 'info'),
         ],
 
         'single' => [
