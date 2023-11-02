@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FirebasePushController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -46,13 +47,15 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('media', [\App\Http\Controllers\MediaController::class, 'index'])->name('media');
     Route::get('media/{id}', [\App\Http\Controllers\MediaController::class, 'show'])->name('media.show');
 
+    Route::post('setToken', [FirebasePushController::class, 'setToken'])->name('firebase.token');
+    Route::post('notification', [FirebasePushController::class, 'notification'])->name('firebase.notification');
 
-/*    Route::group(['middleware' => 'role:100'], function () {
-        Route::resource('users', \App\Http\Controllers\UserController::class);
-        Route::resource('company', \App\Http\Controllers\CompanyController::class);
-        Route::post('company/{id}/users', [\App\Http\Controllers\CompanyController::class, 'userAdd'])->name('user-add');
-        Route::post('schools/{id}/users', [\App\Http\Controllers\SchoolController::class, 'userAdd'])->name('user-add');
-    });*/
+    /*    Route::group(['middleware' => 'role:100'], function () {
+            Route::resource('users', \App\Http\Controllers\UserController::class);
+            Route::resource('company', \App\Http\Controllers\CompanyController::class);
+            Route::post('company/{id}/users', [\App\Http\Controllers\CompanyController::class, 'userAdd'])->name('user-add');
+            Route::post('schools/{id}/users', [\App\Http\Controllers\SchoolController::class, 'userAdd'])->name('user-add');
+        });*/
     Route::group([
         'middleware' => 'role:50',
         'prefix' => 'admin',
