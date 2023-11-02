@@ -4,14 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Http\Requests\UserRequest;
-use App\Http\Resources\SchoolResource;
 use App\Http\Resources\UserResource;
-use App\Http\Resources\UserSchoolResource;
 use App\Http\Resources\UserSchoolsCollection;
 use App\Models\User;
-use App\Services\Sms\Sms;
-use App\Services\Sms\SmsInterface;
-use App\Services\Sms\SmsModel;
+use App\Models\UserDevice;
 use Carbon\Carbon;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Notifications\ResetPassword;
@@ -293,5 +289,45 @@ class AuthController extends BaseController
 
         return $this->sendResponse(compact('data'));
 
+    }
+
+    public function device(Request $request)
+    {
+        $this->validate($request, [
+            'token' => 'required',
+            'deviceName' => 'nullable',
+            'deviceModel' => 'nullable',
+            'status' => 'required|integer',
+        ]);
+
+        $userDevice = UserDevice::select('id')
+            ->where('token', $request->token)
+            ->where('user_id', $this->getUser()->id)
+            ->first();
+
+        if ($userDevice) {
+            $userDevice->update([
+                'status' => $request->status
+            ]);
+
+            Log::info('UserDevice updated', ['id' => $userDevice->id]);
+        } else {
+            $userDevice = UserDevice::create([
+                'token' => $request->token,
+                'status' => $request->status,
+                'user_id' => $this->getUser()->id,
+                'name' => $request->deviceName,
+                'model' => $request->deviceModel,
+            ]);
+
+            Log::info('UserDevice created', ['id' => $userDevice->id]);
+        }
+
+        if ($userDevice) {
+            return $this->sendResponse($userDevice);
+        }
+
+        Log::error('UserDevice create failed.');
+        return $this->sendError('Create failed.');
     }
 }

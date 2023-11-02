@@ -25,6 +25,7 @@ Route::group(['middleware' => 'throttle:5'], function () {
 Route::group(['middleware' => 'auth:api'], function () {
     Route::get('profile',  [\App\Http\Controllers\AuthController::class, 'profile'])->name('profile');
     Route::put('profile',  [\App\Http\Controllers\AuthController::class, 'update'])->name('profile-update');
+    Route::put('profile/device',  [\App\Http\Controllers\AuthController::class, 'device'])->name('profile-device');
     Route::get('schools', [\App\Http\Controllers\SchoolController::class, 'index'])->name('schools');
     Route::get('schools/{id}', [\App\Http\Controllers\SchoolController::class, 'show'])->name('school');
     Route::get('students', [\App\Http\Controllers\StudentController::class, 'index'])->name('students');
