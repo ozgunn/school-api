@@ -38,6 +38,7 @@ class DailyReport extends Model
         'read_at',
         'confirmed_at',
         'date',
+        'user_id',
     ];
 
     protected $guarded = ['id'];

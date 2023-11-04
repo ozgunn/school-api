@@ -154,6 +154,11 @@ class User extends Authenticatable implements JWTSubject, CanResetPassword
         return $this->getParentsStudents()->first();
     }
 
+    public function teachersClass()
+    {
+        return $this->hasOne(SchoolClass::class, 'teacher_id');
+    }
+
     public function getFullName()
     {
         return $this->userData->getFullName();
