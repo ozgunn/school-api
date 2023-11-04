@@ -30,6 +30,8 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('schools/{id}', [\App\Http\Controllers\SchoolController::class, 'show'])->name('school');
     Route::get('students', [\App\Http\Controllers\StudentController::class, 'index'])->name('students');
     Route::get('students/{id}', [\App\Http\Controllers\StudentController::class, 'show'])->name('student');
+    Route::get('students/{id}/daily/{date}', [\App\Http\Controllers\DailyController::class, 'studentDaily'])->name('student.daily');
+    Route::put('students/{id}/daily/{date}', [\App\Http\Controllers\DailyController::class, 'studentDailyStore'])->name('student.daily.store');
     Route::get('daily/{date}', [\App\Http\Controllers\DailyController::class, 'daily'])->name('daily');
     Route::get('daily-all/{year}-{month}', [\App\Http\Controllers\DailyController::class, 'dailyAll'])->name('daily.all');
     Route::post('daily/{id}', [\App\Http\Controllers\DailyController::class, 'approve'])->name('daily.approve');

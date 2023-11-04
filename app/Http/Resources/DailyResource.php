@@ -24,12 +24,59 @@ class DailyResource extends JsonResource
             'confirmed_at' => $this->confirmed_at
         ];
 
-        $response = array_merge($response, $this->decorateNotes($this->selected_notes));
+        $response = array_merge($response, $this->decorateNotes());
 
         return $response;
     }
 
-    public function decorateNotes(string $selected_notes)
+    private function decorateNotes()
+    {
+        $dailyNotes = DailyNote::all();
+
+        $groupedNotes = $dailyNotes->groupBy('parent_id');
+
+        $responseData = [];
+        foreach ($groupedNotes[0] as $i) {
+            $arr = $groupedNotes[$i->id]->toArray();
+            foreach ($arr as $key => $value) {
+                if (!$value['option']) {
+                    $item = $groupedNotes[$value['id']]->toArray();
+                    $arr[$key]['items'] = $this->decorateItems($item);
+                }
+            }
+            $responseData[$i->type]['title'] = $i['title'];
+            $responseData[$i->type]['items'] = $this->decorateItems($arr);
+        }
+
+        return $responseData;
+    }
+
+    private function decorateItem($item)
+    {
+        $decorated = [];
+        $selectedIds = explode(',' , $this->selected_notes);
+
+        $decorated['id'] = $item['id'];
+        if (isset($item['title'])) $decorated['title'] = $item['title'];
+        if (isset($item['option'])) $decorated['title'] = $item['option'];
+        if (isset($item['items'])) $decorated['items'] = $item['items'];
+        $decorated['selected'] = (in_array($item['id'], $selectedIds));
+
+        return $decorated;
+    }
+
+    private function decorateItems($arr)
+    {
+        $decorated = [];
+        foreach ($arr as $item) {
+            $decorated[] = $this->decorateItem($item);
+        }
+
+        return $decorated;
+    }
+
+    /*
+    private function decorateNotesPrevious(string $selected_notes = null)
     {
         $selectedNotes = explode(',', $selected_notes);
 
@@ -77,5 +124,6 @@ class DailyResource extends JsonResource
 
         return $responseData;
     }
+    */
 
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -26,8 +27,10 @@ class StudentResource extends JsonResource
             'class_id' => $this->class_id,
             'class' => $this->class ? $this->class->name : null,
             'parent_id' => $this->parent_id,
-            'teacher' => $this->getTeacher(),
         ];
+
+        if (auth()->user()->role === User::ROLE_PARENT)
+            $response['teacher'] = $this->getTeacher();
 
         return $response;
     }

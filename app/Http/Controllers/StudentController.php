@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\StudentResource;
+use App\Models\Student;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class StudentController extends BaseController
@@ -14,7 +16,10 @@ class StudentController extends BaseController
     {
         $user = auth()->user();
 
-        $students = $user->getParentsStudents()->get();
+        if ($user->role == User::ROLE_TEACHER)
+            $students = $user->teachersClass->students;
+        else
+            $students = $user->getParentsStudents()->get();
 
         $data = [
             'students' => StudentResource::collection($students),
@@ -29,10 +34,13 @@ class StudentController extends BaseController
     public function show(int $id)
     {
         $user = auth()->user();
+        if ($user->role == User::ROLE_TEACHER) {
+            $student = Student::where(['id' => $id, 'class_id' => $user->teachersClass->id])->firstOrFail();
+        } else {
+            $student = $user->getParentsStudent();
+        }
 
-        $student = $user->getParentsStudent();
-
-        $data = new StudentResource($student);
+        $data = $student ? new StudentResource($student) : null;
 
         return $this->sendResponse($data);
     }
