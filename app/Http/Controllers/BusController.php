@@ -3,31 +3,76 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\BusResource;
-use App\Http\Resources\FoodMenuResource;
-use App\Models\FoodMenu;
+use App\Models\Bus;
+use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class BusController extends BaseController
 {
     /**
-     * List current month's menu
+     * List student's buses
      */
     public function index(Request $request, int $time = null)
     {
         $user = auth()->user();
 
-        $student = $user->getParentsStudent();
         $data = null;
 
-        if ($time && $time === 1 && $student->getMorningBus())
-            $data =  new BusResource($student->getMorningBus()->first());
-        else if ($time && $time == 2 && $student->getEveningBus())
-            $data = new BusResource($student->getEveningBus()->first());
-        else if (!empty($student->getBuses()))
-            $data = BusResource::collection($student->getBuses());
+        if ($user->role == User::ROLE_TEACHER) {
+            $buses = $user->buses;
+            $data = BusResource::collection($buses);
+        } else {
+            $student = $user->getParentsStudent();
+            if ($time && $time === 1 && $student->getMorningBus())
+                $data =  new BusResource($student->getMorningBus()->first());
+            else if ($time && $time == 2 && $student->getEveningBus())
+                $data = new BusResource($student->getEveningBus()->first());
+            else if (!empty($student->getBuses()))
+                $data = BusResource::collection($student->getBuses());
+        }
 
         return $this->sendResponse($data);
+    }
+
+    public function sendPosition(Request $request, int $id)
+    {
+        $user = auth()->user();
+
+        if ($user->role != User::ROLE_TEACHER)
+            abort(404);
+
+        $bus = Bus::where(['id' => $id, 'teacher_id' => $user->id])->firstOrFail();
+        $previousStatus = $bus->status;
+
+        $request->validate([
+            'status' => ['integer','required', Rule::in([Bus::STATUS_PASSIVE, Bus::STATUS_ACTIVE])],
+            'lat' => 'numeric|between:-90,90|nullable',
+            'long' => 'numeric|between:-90,90|nullable',
+        ]);
+
+        $result = $bus->update([
+            'status' => $request->status,
+            'lat' => $request->lat,
+            'long' => $request->long,
+        ]);
+
+        if ($result) {
+            // Bus started to move
+            if ($previousStatus == Bus::STATUS_PASSIVE && $request->status == Bus::STATUS_ACTIVE) {
+                // TODO: Servisi kullanan tüm kullanıcıların tüm devicelarına notification gönderilecekse, queue yapısı kurulmalı.
+                // $user->sendPushNotification('Servis harekete geçti', 'Servisiniz harekete geçmiştir', 'schoolbus');
+            }
+
+            // Bus arrived
+            if ($previousStatus == Bus::STATUS_ACTIVE && $request->status == Bus::STATUS_PASSIVE) {
+                // $user->sendPushNotification('Servis harekete geçti', 'Servisiniz harekete geçmiştir', 'schoolbus');
+            }
+
+            return $this->sendResponse($result);
+        }
+
+        return $this->sendResponse($result);
     }
 
 }

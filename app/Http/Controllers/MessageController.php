@@ -111,7 +111,7 @@ class MessageController extends BaseController
 
     public function allMessages(Request $request)
     {
-        // TODO
+        // TODO: ileride yapılabilir
         return $this->sendResponse(null);
         $user = auth()->user();
         if ($user->role != User::ROLE_TEACHER)
@@ -173,8 +173,6 @@ class MessageController extends BaseController
             abort(404);
 
         $student = Student::where(['id' => $id, 'class_id' => $user->teachersClass->id])->firstOrFail();
-
-        $school_id = $student->school_id;
 
         $validated = $request->validated();
         $validated['teacher_id'] = $user->id;
