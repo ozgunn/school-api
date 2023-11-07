@@ -6,7 +6,10 @@ use App\Http\Components\Paginator;
 use App\Http\Requests\MessageRequest;
 use App\Http\Resources\MessageResource;
 use App\Models\Message;
+use App\Models\Student;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
 
 class MessageController extends BaseController
@@ -17,6 +20,8 @@ class MessageController extends BaseController
     public function school(Request $request)
     {
         $user = auth()->user();
+        if ($user->role != User::ROLE_PARENT)
+            abort(404);
 
         $student = $user->getParentsStudent();
 
@@ -34,11 +39,13 @@ class MessageController extends BaseController
     }
 
     /**
-     * List school messages
+     * List teacher messages
      */
     public function teacher(Request $request)
     {
         $user = auth()->user();
+        if ($user->role != User::ROLE_PARENT)
+            abort(404);
 
         $student = $user->getParentsStudent();
 
@@ -60,6 +67,9 @@ class MessageController extends BaseController
     public function teacherStore(MessageRequest $request)
     {
         $user = auth()->user();
+        if ($user->role != User::ROLE_PARENT)
+            abort(404);
+
         $student = $user->getParentsStudent();
         $teacher_id = $student->class->teacher_id;
 
@@ -80,6 +90,9 @@ class MessageController extends BaseController
     public function schoolStore(MessageRequest $request)
     {
         $user = auth()->user();
+        if ($user->role != User::ROLE_PARENT)
+            abort(404);
+
         $student = $user->getParentsStudent();
         $school_id = $student->school_id;
 
@@ -90,6 +103,85 @@ class MessageController extends BaseController
         $validated['student_id'] = $student->id;
         $validated['ip'] = $request->getClientIp();
         $validated['type'] = Message::TYPE_SCHOOL;
+
+        $message = Message::create($validated);
+
+        return $this->sendResponse($message ? new MessageResource($message): null);
+    }
+
+    public function allMessages(Request $request)
+    {
+        // TODO
+        return $this->sendResponse(null);
+        $user = auth()->user();
+        if ($user->role != User::ROLE_TEACHER)
+            abort(404);
+
+        $query = Message::select('student_id')
+            ->selectRaw('MAX(created_at) AS last_created_at')
+            ->selectRaw('(SELECT read_at
+                FROM messages AS m2
+                WHERE m2.student_id = messages.student_id
+                ORDER BY created_at DESC
+                LIMIT 1) AS last_read_at')
+            ->where(function($query) {
+                $query->where('user_id', 2)
+                    ->orWhere('teacher_id', 2);
+            })
+            ->orderByDesc('id')
+            ->groupBy('student_id')
+            ->with('student')
+            ->with('user')
+            ;
+
+        $allowedSort = ['id'];
+        $messages = Paginator::sort($request, $query, $allowedSort, 'desc')->paginate(config('app.defaults.pageSize'));
+
+        $data = [
+            'messages' => MessageResource::collection($query->get()),
+            'pagination' => Paginator::paginate($messages)
+        ];
+
+        return $this->sendResponse($data);
+    }
+
+    public function student(Request $request, int $id)
+    {
+        $user = auth()->user();
+        if ($user->role != User::ROLE_TEACHER)
+            abort(404);
+
+        $student = Student::where(['id' => $id, 'class_id' => $user->teachersClass->id])->firstOrFail();
+
+        $query = Message::where(['teacher_id' => $user->id, 'student_id' => $student->id]);
+
+        $allowedSort = ['id'];
+        $messages = Paginator::sort($request, $query, $allowedSort, 'desc')->paginate(config('app.defaults.pageSize'));
+
+        $data = [
+            'messages' => MessageResource::collection($messages),
+            'pagination' => Paginator::paginate($messages)
+        ];
+
+        return $this->sendResponse($data);
+    }
+
+    public function studentStore(MessageRequest $request, int $id)
+    {
+        $user = auth()->user();
+        if ($user->role != User::ROLE_TEACHER)
+            abort(404);
+
+        $student = Student::where(['id' => $id, 'class_id' => $user->teachersClass->id])->firstOrFail();
+
+        $school_id = $student->school_id;
+
+        $validated = $request->validated();
+        $validated['teacher_id'] = $user->id;
+        $validated['user_id'] = $user->id;
+        $validated['student_id'] = $student->id;
+        $validated['ip'] = $request->getClientIp();
+        $validated['type'] = Message::TYPE_TEACHER;
 
         $message = Message::create($validated);
 

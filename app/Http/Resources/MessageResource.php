@@ -17,6 +17,20 @@ class MessageResource extends JsonResource
     public function toArray(Request $request): array
     {
         $user_id = auth()->user()->id;
+
+        if ($this->student_id) {
+            return [
+                'message' => $this->message,
+                'student' => new StudentResource($this->student),
+                'user_id' => $this->user_id,
+                'role' => ($this->user_id === $user_id) ? Message::ROLE_SENDER : Message::ROLE_RECIPIENT,
+                'read_at' => $this->read_at,
+                'created_at' => $this->created_at,
+//                'last_created_at' => $this->last_created_at,
+//                'last_read_at' => $this->last_read_at,
+            ];
+        }
+
         $response = [
             'id' => $this->id,
             'message' => $this->message,

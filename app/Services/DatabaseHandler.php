@@ -17,8 +17,8 @@ class DatabaseHandler extends AbstractProcessingHandler
         Log::create([
             'level' => $record['level_name'],
             'user_id' => auth()->user() ? auth()->user()->id : null,
-            'message' => $record['message'],
-            'context' => json_encode($record['context']),
+            'message' => substr($record['message'], 255),
+            'context' => substr($record['formatted'], 500),
         ]);
     }
 }
