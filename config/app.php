@@ -18,6 +18,7 @@ return [
     'user_auto_approval' => env('USER_AUTO_APPROVAL', true),
     'server_url' => env('SERVER_URL', 'http://localhost'),
     'image_path' => env('IMAGE_PATH', '/images'),
+    'app_prefix' => 'kaptanyuva://',
 
     'defaults' => [
         'locale' => 'tr',

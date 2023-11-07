@@ -8,8 +8,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
+use Kreait\Firebase\Messaging\CloudMessage;
+use Kreait\Laravel\Firebase\Facades\Firebase;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Support\Facades\Log as Log;
 
 /**
  * @property string $name
@@ -159,6 +161,16 @@ class User extends Authenticatable implements JWTSubject, CanResetPassword
         return $this->hasOne(SchoolClass::class, 'teacher_id');
     }
 
+    public function buses()
+    {
+        return $this->hasMany(Bus::class, 'teacher_id', 'id');
+    }
+
+    public function devices()
+    {
+        return $this->hasMany(UserDevice::class, 'user_id', 'id');
+    }
+
     public function getFullName()
     {
         return $this->userData->getFullName();
@@ -174,6 +186,37 @@ class User extends Authenticatable implements JWTSubject, CanResetPassword
             $fileUrl = $prefix . self::PATH . $defaultImage;
         }
         return $fileUrl;
+    }
+
+    public function sendPushNotification($title, $body, $page = null)
+    {
+        $data = [
+            'page' => config('app.app_prefix') . $page,
+        ];
+
+        $notification = Firebase::messaging();
+
+        /** @var UserDevice $userDevice */
+        foreach ($this->devices as $userDevice) {
+            if ($userDevice->status == UserDevice::STATUS_OPEN) {
+                $message = CloudMessage::fromArray([
+                    'token' => $userDevice->token,
+                    'notification' => [
+                        'title' => $title,
+                        'body' => $body,
+                    ],
+                    'data' => $data,
+                ]);
+
+                $result = $notification->send($message);
+
+                if(isset($result['name'])) {
+                    Log::info('push notification sent', ['user' => $this->id, 'title' => $title, 'result' => $result['name']]);
+                } else {
+                    Log::error('push notification sent failed', ['user' => $this->id, 'title' => $title, 'result' => $result]);
+                }
+            }
+        }
     }
 
 }
