@@ -21,7 +21,7 @@ class BusResource extends JsonResource
             'long' => $this->long,
             'teacher' => $this->teacher?->name,
             'start_time' => $this->start_time,
-            'end_time' => $this->start_time,
+            'end_time' => $this->end_time,
             'status' => $this->status,
         ];
 

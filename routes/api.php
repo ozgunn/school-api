@@ -52,6 +52,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('pdfs/group', [\App\Http\Controllers\FilesController::class, 'group'])->name('pdfs.group');
     Route::get('media', [\App\Http\Controllers\MediaController::class, 'index'])->name('media');
     Route::get('media/{id}', [\App\Http\Controllers\MediaController::class, 'show'])->name('media.show');
+    Route::post('media', [\App\Http\Controllers\MediaController::class, 'upload'])->name('media.upload');
     Route::put('school-bus/{id}', [\App\Http\Controllers\BusController::class, 'sendPosition'])->name('school-bus.send');
 
     Route::post('setToken', [FirebasePushController::class, 'setToken'])->name('firebase.token');
