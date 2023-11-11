@@ -56,7 +56,8 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('media', [\App\Http\Controllers\MediaController::class, 'upload'])->name('media.upload');
     Route::delete('media/{id}', [\App\Http\Controllers\MediaController::class, 'delete'])->name('media.delete');
 
-    Route::get('notifications', [\App\Http\Controllers\NotificationController::class, 'index'])->name('media');
+    Route::get('notifications', [\App\Http\Controllers\NotificationController::class, 'index'])->name('notifications');
+    Route::put('notifications', [\App\Http\Controllers\NotificationController::class, 'read'])->name('notifications.read');
     Route::post('setToken', [FirebasePushController::class, 'setToken'])->name('firebase.token');
     Route::post('notification', [FirebasePushController::class, 'notification'])->name('firebase.notification');
 
