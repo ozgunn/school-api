@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\UserNotificationResource;
 use App\Models\UserNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class NotificationController extends BaseController
 {
@@ -15,8 +16,7 @@ class NotificationController extends BaseController
 
         $type = $request->get('type');
 
-        $items = UserNotification::
-            where('user_id', $user->id);
+        $items = UserNotification::where('user_id', $user->id);
 
         if ($type && $type == UserNotification::TYPE_UNREAD)
             $items = $items->whereNull('read_at');
@@ -32,5 +32,16 @@ class NotificationController extends BaseController
             'unread_count' => $unreadCount,
         ];
         return $this->sendResponse($data);
+    }
+
+    public function read(Request $request)
+    {
+        $user = $this->getUser();
+
+        UserNotification::where('user_id', $user->id)
+            ->whereNull('read_at')
+            ->update(['read_at' => Carbon::now()]);
+
+        return $this->sendResponse(true);
     }
 }
