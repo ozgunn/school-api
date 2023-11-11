@@ -28,16 +28,25 @@ class MediaController extends BaseController
         else
             $class_id = $user->getParentsStudent()->class_id;
 
-        $next = $request->get('next', 0);
+        $day = $request->get('day');
 
-        $month = Carbon::now()->subMonths($next);
-        $startDate = $month->startOfMonth()->format('Y-m-d');
-        $endDate = $month->endOfMonth()->format('Y-m-d');
+        if ($day && strtotime($day)) {
+            $photos = Media::where('class_id', $class_id)
+                ->where('publish_date', $day)
+                ->orderByDesc('id')
+                ->get();
+        } else {
+            $next = $request->get('next', 0);
 
-        $photos = Media::where('class_id', $class_id)
-            ->whereBetween('publish_date', [$startDate, $endDate])
-            ->orderByDesc('publish_date')
-            ->get();
+            $month = Carbon::now()->subMonths($next);
+            $startDate = $month->startOfMonth()->format('Y-m-d');
+            $endDate = $month->endOfMonth()->format('Y-m-d');
+
+            $photos = Media::where('class_id', $class_id)
+                ->whereBetween('publish_date', [$startDate, $endDate])
+                ->orderByDesc('publish_date')
+                ->get();
+        }
 
         $data = $photos->groupBy(function ($photo) {
             return Carbon::createFromTimeString($photo->publish_date)->format('Y-m-d');

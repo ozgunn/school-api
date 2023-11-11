@@ -41,9 +41,6 @@ class AuthController extends BaseController
         if ($token = Auth::attempt($credentials)) {
             $user = Auth::user();
 
-//            $schools = $user->getSchools();
-//            $company = $user->getCompanies();
-
             $schools = $user->schools()->get();
 
             $data = [
