@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('user_notifications', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('sender_id')->nullable();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('device_id')->nullable();
             $table->string('title');
@@ -25,6 +26,8 @@ return new class extends Migration
         try {
             Schema::table('user_notifications', function($table) {
                 $table->foreign('user_id')->references('id')
+                    ->on('users');
+                $table->foreign('sender_id')->references('id')
                     ->on('users');
             });
         } catch (Exception $exception) {
