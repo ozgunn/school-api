@@ -41,6 +41,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('foods/{date}', [\App\Http\Controllers\FoodMenuController::class, 'show'])->name('food-menu.date');
     Route::get('school-bus', [\App\Http\Controllers\BusController::class, 'index'])->name('school-bus');
     Route::get('school-bus/{time}', [\App\Http\Controllers\BusController::class, 'index'])->name('school-bus.time');
+    Route::put('school-bus/{id}', [\App\Http\Controllers\BusController::class, 'sendPosition'])->name('school-bus.send');
     Route::get('messages/school', [\App\Http\Controllers\MessageController::class, 'school'])->name('messages.school');
     Route::get('messages/teacher', [\App\Http\Controllers\MessageController::class, 'teacher'])->name('messages.teacher');
     Route::post('messages/school', [\App\Http\Controllers\MessageController::class, 'schoolStore'])->name('messages.school.store');
@@ -53,7 +54,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('media', [\App\Http\Controllers\MediaController::class, 'index'])->name('media');
     Route::get('media/{id}', [\App\Http\Controllers\MediaController::class, 'show'])->name('media.show');
     Route::post('media', [\App\Http\Controllers\MediaController::class, 'upload'])->name('media.upload');
-    Route::put('school-bus/{id}', [\App\Http\Controllers\BusController::class, 'sendPosition'])->name('school-bus.send');
+    Route::delete('media/{id}', [\App\Http\Controllers\MediaController::class, 'delete'])->name('media.delete');
 
     Route::post('setToken', [FirebasePushController::class, 'setToken'])->name('firebase.token');
     Route::post('notification', [FirebasePushController::class, 'notification'])->name('firebase.notification');

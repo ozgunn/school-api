@@ -8,6 +8,8 @@ use App\Models\Media;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class MediaController extends BaseController
@@ -49,7 +51,7 @@ class MediaController extends BaseController
     }
 
     /**
-     * List group newspaper
+     * Show media
      */
     public function show(int $id)
     {
@@ -112,11 +114,34 @@ class MediaController extends BaseController
         }
 
         if (!empty($errors)) {
-            return $this->sendError('error', $errors);
+            return $this->sendError(trans('Error'), $errors);
         }
 
-        return $this->sendResponse('uploaded successfully');
+        return $this->sendResponse(trans('Uploaded successfully'));
     }
 
+    /**
+     * Delete media
+     */
+    public function delete(int $id)
+    {
+        $user = auth()->user();
+
+        if ($user->role != User::ROLE_TEACHER)
+            abort(404);
+
+        $media = Media::where('user_id', $user->id)
+            ->where('id', $id)
+            ->firstOrFail();
+
+        $filePath = public_path(self::PATH . '/' . $media->file);
+
+        if (File::exists($filePath)) {
+            File::delete($filePath);
+            Log::info('image deleted: '. $filePath,);
+        }
+
+        return ($media->delete()) ? $this->sendResponse(trans('Deleted successfully')) : $this->sendError(trans('Error'));
+    }
 
 }

@@ -6,5 +6,9 @@
     "second_meal": "Öğle",
     "third_meal": "İkindi",
     "Parents Newspaper":  "Anne Baba Gazetesi",
-    "Group Newspaper":  "Grup Gazetesi"
+    "Group Newspaper":  "Grup Gazetesi",
+
+    "Deleted successfully": "Silme başarılı",
+    "Uploaded successfully": "Yükleme başarılı",
+    "Error": "Hata"
 }

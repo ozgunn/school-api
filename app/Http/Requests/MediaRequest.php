@@ -15,6 +15,7 @@ class MediaRequest extends FormRequest
     public function rules()
     {
         $rules = [
+            'files' => 'required|array',
             'files.*' => 'image|mimes:jpeg,png,jpg,gif|max:10240',
             'description' => 'nullable|string|max:255',
         ];
