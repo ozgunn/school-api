@@ -8,6 +8,8 @@ use App\Models\Media;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class MediaController extends BaseController
@@ -26,16 +28,25 @@ class MediaController extends BaseController
         else
             $class_id = $user->getParentsStudent()->class_id;
 
-        $next = $request->get('next', 0);
+        $day = $request->get('day');
 
-        $month = Carbon::now()->subMonths($next);
-        $startDate = $month->startOfMonth()->format('Y-m-d');
-        $endDate = $month->endOfMonth()->format('Y-m-d');
+        if ($day && strtotime($day)) {
+            $photos = Media::where('class_id', $class_id)
+                ->where('publish_date', $day)
+                ->orderByDesc('id')
+                ->get();
+        } else {
+            $next = $request->get('next', 0);
 
-        $photos = Media::where('class_id', $class_id)
-            ->whereBetween('publish_date', [$startDate, $endDate])
-            ->orderByDesc('publish_date')
-            ->get();
+            $month = Carbon::now()->subMonths($next);
+            $startDate = $month->startOfMonth()->format('Y-m-d');
+            $endDate = $month->endOfMonth()->format('Y-m-d');
+
+            $photos = Media::where('class_id', $class_id)
+                ->whereBetween('publish_date', [$startDate, $endDate])
+                ->orderByDesc('publish_date')
+                ->get();
+        }
 
         $data = $photos->groupBy(function ($photo) {
             return Carbon::createFromTimeString($photo->publish_date)->format('Y-m-d');
@@ -49,7 +60,7 @@ class MediaController extends BaseController
     }
 
     /**
-     * List group newspaper
+     * Show media
      */
     public function show(int $id)
     {
@@ -112,11 +123,34 @@ class MediaController extends BaseController
         }
 
         if (!empty($errors)) {
-            return $this->sendError('error', $errors);
+            return $this->sendError(trans('Error'), $errors);
         }
 
-        return $this->sendResponse('uploaded successfully');
+        return $this->sendResponse(trans('Uploaded successfully'));
     }
 
+    /**
+     * Delete media
+     */
+    public function delete(int $id)
+    {
+        $user = auth()->user();
+
+        if ($user->role != User::ROLE_TEACHER)
+            abort(404);
+
+        $media = Media::where('user_id', $user->id)
+            ->where('id', $id)
+            ->firstOrFail();
+
+        $filePath = public_path(self::PATH . '/' . $media->file);
+
+        if (File::exists($filePath)) {
+            File::delete($filePath);
+            Log::info('image deleted: '. $filePath,);
+        }
+
+        return ($media->delete()) ? $this->sendResponse(trans('Deleted successfully')) : $this->sendError(trans('Error'));
+    }
 
 }
