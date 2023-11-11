@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @property integer $id
  * @property integer $user_id
+ * @property integer $sender_id
  * @property string $title
  * @property string $description
  * @property string $page
@@ -34,6 +35,7 @@ class UserNotification extends Model
      */
     protected $fillable = [
         'user_id',
+        'sender_id',
         'title',
         'page',
         'description',
@@ -62,6 +64,10 @@ class UserNotification extends Model
 
     public function user() {
         return $this->belongsTo(User::class);
+    }
+
+    public function sender() {
+        return $this->belongsTo(User::class, 'sender_id', 'id');
     }
 
 }

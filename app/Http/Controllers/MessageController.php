@@ -204,7 +204,8 @@ class MessageController extends BaseController
         if ($message) {
             // send notification
             $n = new UserNotification();
-            $n->user_id = $user->id;
+            $n->sender_id = $user->id;
+            $n->user_id = $student->id;
             $n->title = __('New message from teacher');
             $n->description = __('Click for detail');
             $n->page = 'messages/teacher';
