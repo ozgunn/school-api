@@ -15,13 +15,22 @@ class NotificationController extends BaseController
 
         $type = $request->get('type');
 
-        $items = UserNotification::where('user_id', $user->id);
+        $items = UserNotification::
+            where('user_id', $user->id);
 
         if ($type && $type == UserNotification::TYPE_UNREAD)
             $items = $items->whereNull('read_at');
 
         $items = $items->orderByDesc('id')->take(20)->get();
 
-        return $this->sendResponse(UserNotificationResource::collection($items ?? []));
+        $unreadCount = UserNotification::where('user_id', $user->id)
+            ->whereNull('read_at')
+            ->count();
+
+        $data = [
+            'notifications' => UserNotificationResource::collection($items),
+            'unread_count' => $unreadCount,
+        ];
+        return $this->sendResponse($data);
     }
 }
