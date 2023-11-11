@@ -22,16 +22,20 @@ class UserNotificationSeeder extends Seeder
     {
         return [
             [
-                'title' => 'Okuldan öğrenciye (veliye) mesaj',
+                'title' => 'Öğretmeninizden bir mesaj geldi',
+                'description' => 'Detaylar için tıklayın',
                 'user_id' => 2,
                 'created_at' => new \DateTime(),
                 'read_at' => null,
+                'page' => 'kaptanyuva://messages/1',
             ],
             [
-                'title' => 'Öğretmenden öğrenciye (veliye) mesaj',
+                'title' => 'Gün sonu değerlendirmesi eklendi',
+                'description' => 'Detaylar için tıklayın',
                 'user_id' => 2,
                 'created_at' => new \DateTime(),
                 'read_at' => new \DateTime(),
+                'page' => 'kaptanyuva://daiy',
             ],
         ];
     }
