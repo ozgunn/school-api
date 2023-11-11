@@ -5,11 +5,15 @@ namespace App\Http\Controllers;
 use App\Http\Components\Paginator;
 use App\Http\Requests\MessageRequest;
 use App\Http\Resources\MessageResource;
+use App\Http\Services\NotificationService;
+use App\Jobs\SendFirebaseNotification;
 use App\Models\Message;
 use App\Models\Student;
 use App\Models\User;
+use App\Models\UserNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
 
 class MessageController extends BaseController
@@ -84,7 +88,20 @@ class MessageController extends BaseController
 
         $message = Message::create($validated);
 
-        return $this->sendResponse($message ? new MessageResource($message): null);
+        if ($message) {
+            // send notification
+            $n = new UserNotification();
+            $n->sender_id = $user->id;
+            $n->user_id = $teacher_id;
+            $n->title = __('New message from student');
+            $n->description = __(':name sent a new message', ['name' => $student->id]);
+            $n->page = 'messages/students/' . $student->id;
+            $n->save();
+
+            dispatch(new SendFirebaseNotification($n));
+        }
+
+        return $this->sendResponse($message ? new MessageResource($message) : null);
     }
 
     public function schoolStore(MessageRequest $request)
@@ -106,7 +123,7 @@ class MessageController extends BaseController
 
         $message = Message::create($validated);
 
-        return $this->sendResponse($message ? new MessageResource($message): null);
+        return $this->sendResponse($message ? new MessageResource($message) : null);
     }
 
     public function allMessages(Request $request)
@@ -124,15 +141,14 @@ class MessageController extends BaseController
                 WHERE m2.student_id = messages.student_id
                 ORDER BY created_at DESC
                 LIMIT 1) AS last_read_at')
-            ->where(function($query) {
+            ->where(function ($query) {
                 $query->where('user_id', 2)
                     ->orWhere('teacher_id', 2);
             })
             ->orderByDesc('id')
             ->groupBy('student_id')
             ->with('student')
-            ->with('user')
-            ;
+            ->with('user');
 
         $allowedSort = ['id'];
         $messages = Paginator::sort($request, $query, $allowedSort, 'desc')->paginate(config('app.defaults.pageSize'));
@@ -168,7 +184,9 @@ class MessageController extends BaseController
 
     public function studentStore(MessageRequest $request, int $id)
     {
+        /** @var User $user */
         $user = auth()->user();
+
         if ($user->role != User::ROLE_TEACHER)
             abort(404);
 
@@ -183,7 +201,19 @@ class MessageController extends BaseController
 
         $message = Message::create($validated);
 
-        return $this->sendResponse($message ? new MessageResource($message): null);
+        if ($message) {
+            // send notification
+            $n = new UserNotification();
+            $n->user_id = $user->id;
+            $n->title = __('New message from teacher');
+            $n->description = __('Click for detail');
+            $n->page = 'messages/teacher';
+            $n->save();
+
+            dispatch(new SendFirebaseNotification($n));
+        }
+
+        return $this->sendResponse($message ? new MessageResource($message) : null);
     }
 
 }
