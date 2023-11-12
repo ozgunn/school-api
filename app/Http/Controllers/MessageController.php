@@ -94,7 +94,7 @@ class MessageController extends BaseController
             $n->sender_id = $user->id;
             $n->user_id = $teacher_id;
             $n->title = __('New message from student');
-            $n->description = __(':name sent a new message', ['name' => $student->id]);
+            $n->description = __(':name sent a new message', ['name' => $student->name]);
             $n->page = 'messages/students/' . $student->id;
             $n->save();
 
