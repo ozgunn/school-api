@@ -26,7 +26,7 @@ class MediaResource extends JsonResource
             'group_id' => $this->group_id,
             'user_id' => $this->user_id,
             'publish_date' => $this->publish_date,
-            'description' => $this->description ?? $this->getTitle(),
+            'description' => $this->description,
         ];
 
         return $response;
