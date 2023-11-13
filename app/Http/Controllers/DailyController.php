@@ -118,6 +118,29 @@ class DailyController extends BaseController
 
     }
 
+    public function studentDailyAll(int $id, int $year, int $month)
+    {
+        if ($year > 2100 || $year < 2020 || $month < 1 || $month > 12) {
+            abort(404);
+        }
+        $user = auth()->user();
+
+        if ($user->role != User::ROLE_TEACHER)
+            abort(404);
+
+        $student = Student::where(['id' => $id, 'class_id' => $user->teachersClass->id])->firstOrFail();
+
+        $report = DailyReport::where(['student_id' => $student->id])
+            ->whereYear('date', $year)
+            ->whereMonth('date', $month)
+            ->get();
+
+        $data = DailyAllResource::collection($report);
+
+        return $this->sendResponse($data);
+
+    }
+
     public function studentDailyStore(DailyReportRequest $request, int $id, $date)
     {
         $parsedDate = Carbon::createFromFormat('Y-m-d', $date);
