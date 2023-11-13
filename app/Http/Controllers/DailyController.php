@@ -133,6 +133,7 @@ class DailyController extends BaseController
         $report = DailyReport::where(['student_id' => $student->id])
             ->whereYear('date', $year)
             ->whereMonth('date', $month)
+            ->orderBy('date')
             ->get();
 
         $data = DailyAllResource::collection($report);
