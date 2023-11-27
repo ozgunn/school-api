@@ -37,6 +37,7 @@ class SendFirebaseNotification implements ShouldQueue
     {
         $data = [
             'page' => config('app.app_prefix') . $this->notification->page,
+            'page_id' => $this->notification->page_id,
         ];
         $message = [
             //'token' => $userDevice->token,
