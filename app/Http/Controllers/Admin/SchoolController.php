@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Components\Paginator;
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\SchoolRequest;
 use App\Http\Resources\SchoolResource;
@@ -17,10 +18,14 @@ class SchoolController extends BaseController
      */
     public function index(Request $request)
     {
-        $schools = $this->findUserSchools();
+        $query = $this->findUserSchools();
+
+        $allowedSort = ['id'];
+        $schools = Paginator::sort($request, $query, $allowedSort, 'desc')->paginate(config('app.defaults.pageSize'));
 
         $data = [
             'schools' => SchoolResource::collection($schools),
+            'pagination' => Paginator::paginate($schools)
         ];
 
         return $this->sendResponse($data);
@@ -154,10 +159,10 @@ class SchoolController extends BaseController
     {
         $user = auth()->user();
         if ($user->role === User::ROLE_SUPERADMIN) {
-            $schools = School::sortBy('id')->get();
+            $schools = School::all();
 
         } else {
-            $schools = $user->schools()->whereNotNull('parent_id')->get()->sortBy('id');
+            $schools = $user->schools()->whereNotNull('parent_id')->getQuery();
         }
 
         return $schools;

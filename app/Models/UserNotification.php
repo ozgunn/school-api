@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $title
  * @property string $description
  * @property string $page
+ * @property int $page_id
  * @property DateTime $read_at
  * @property DateTime $sent_at
  * @property DateTime $created_at
@@ -38,6 +39,7 @@ class UserNotification extends Model
         'sender_id',
         'title',
         'page',
+        'page_id',
         'description',
         'read_at',
         'sent_at',

@@ -121,9 +121,10 @@ class User extends Authenticatable implements JWTSubject, CanResetPassword
     public function schools()
     {
         return $this->belongsToMany(School::class, 'school_user')
+            ->select('schools.*')
             ->where('role', '<=', $this->role)
             ->withPivot('role')
-            ->orderByDesc('role');
+            ;
     }
 
     public function getCompany()

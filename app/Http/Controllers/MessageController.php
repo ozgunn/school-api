@@ -95,7 +95,8 @@ class MessageController extends BaseController
             $n->user_id = $teacher_id;
             $n->title = __('New message from student');
             $n->description = __(':name sent a new message', ['name' => $student->name]);
-            $n->page = 'messages/students/' . $student->id;
+            $n->page = 'messages/students';
+            $n->page_id = $student->id;
             $n->save();
 
             dispatch(new SendFirebaseNotification($n));
