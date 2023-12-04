@@ -18,6 +18,10 @@ class GroupResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'age_group' => $this->age_group,
+            'school' => [
+                'id' => $this->school->id,
+                'name' => $this->school->name,
+            ],
         ];
 
         return $response;

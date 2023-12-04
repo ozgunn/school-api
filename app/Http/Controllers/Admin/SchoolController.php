@@ -21,11 +21,11 @@ class SchoolController extends BaseController
         $query = $this->findUserSchools();
 
         $allowedSort = ['id'];
-        $schools = Paginator::sort($request, $query, $allowedSort, 'desc')->paginate(config('app.defaults.pageSize'));
-
+        //$schools = Paginator::sort($request, $query, $allowedSort, 'desc')->paginate(config('app.defaults.pageSize'));
+        $schools = $query;
         $data = [
-            'schools' => SchoolResource::collection($schools),
-            'pagination' => Paginator::paginate($schools)
+            'schools' => SchoolResource::collection($schools->get()),
+            //'pagination' => Paginator::paginate($schools)
         ];
 
         return $this->sendResponse($data);
@@ -54,11 +54,10 @@ class SchoolController extends BaseController
         }
         $validated = $request->validated();
         // Parent_id (company) control
-        $validated = array_merge($validated, $request->validate(['parent_id' => 'required']));
-        $parentId = $validated['parent_id'];
+        $validated['parent_id'] = $user->getCompany()->id;
 
         $userCompanies = $user->getCompanies()->pluck('id')->toArray();
-        if (!in_array($parentId, $userCompanies)) {
+        if (!in_array($validated['parent_id'], $userCompanies)) {
             return $this->sendError(__('Not allowed'), __('You are unauthorized'), 403);
         }
 
@@ -106,6 +105,12 @@ class SchoolController extends BaseController
         }
 
         $school = $this->findUserSchool($id);
+        $userCount = $school->users()->count();
+        $studentCount = $school->students()->count();
+
+        if ($user->role < User::ROLE_SUPERADMIN && ( $userCount || $studentCount )) {
+            return $this->sendError(__('Delete failed'), __("School has users ({$userCount}) or students ({$studentCount})"));
+        }
 
         try {
             $school->delete();
@@ -160,9 +165,8 @@ class SchoolController extends BaseController
         $user = auth()->user();
         if ($user->role === User::ROLE_SUPERADMIN) {
             $schools = School::all();
-
         } else {
-            $schools = $user->schools()->whereNotNull('parent_id')->getQuery();
+            $schools = $user->schools()->distinct()->whereNotNull('parent_id')->getQuery();
         }
 
         return $schools;

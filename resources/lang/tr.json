@@ -12,7 +12,13 @@
     ":name sent a new message": ":name mesaj gönderdi",
     "Click for detail": "Detaylar için tıklayın",
 
+    "Deleted": "Silindi",
     "Deleted successfully": "Silme başarılı",
+    "Delete failed": "Silme işlemi başarısız!",
+    "Created successfully": "Oluşturma başarılı",
+    "Create failed": "Oluşturma işlemi başarısız!",
+    "Updated successfully": "Güncelleme başarılı",
+    "Update failed": "Güncelleme işlemi başarısız!",
     "Uploaded successfully": "Yükleme başarılı",
     "Error": "Hata"
 }

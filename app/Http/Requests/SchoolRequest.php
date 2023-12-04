@@ -19,7 +19,7 @@ class SchoolRequest extends FormRequest
             'name' => 'required|string|min:3|max:100',
             'logo' => 'nullable|string|max:255',
             'status' => ['nullable', 'integer', Rule::in(array_keys(School::STATUSES))],
-            'phone' => 'nullable|string|max:20',
+            'phone' => ['nullable', 'regex:/^(0[0-9]*|[1-9][0-9]*)$/'],
             'email' => 'nullable|string|max:100',
             'country' => 'nullable|integer',
             'city' => 'nullable|integer',

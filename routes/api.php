@@ -75,6 +75,8 @@ Route::group(['middleware' => 'auth:api'], function () {
     ], function () {
         Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
         Route::resource('schools', \App\Http\Controllers\Admin\SchoolController::class);
+        Route::resource('groups', \App\Http\Controllers\Admin\GroupController::class);
+        Route::resource('classes', \App\Http\Controllers\Admin\ClassController::class);
         Route::post('schools/{id}/users', [\App\Http\Controllers\Admin\SchoolController::class, 'userAdd'])->name('user-add');
     });
 });

@@ -29,6 +29,7 @@ class UserResource extends JsonResource
             'updated_at' => $this->updated_at,
             'user_data' => $this->getUserData(),
             'school' => $this->getSchoolData(),
+            'company' => $this->getCompanyData(),
             'image' => $this->getProfileImageUrl(),
         ];
     }
@@ -61,6 +62,18 @@ class UserResource extends JsonResource
             $school = [
                 'id' => $this->getSchool()->id,
                 'name' => $this->getSchool()->name,
+            ];
+        }
+        return $school;
+    }
+
+    public function getCompanyData()
+    {
+        $school = [];
+        if ($company = $this->getCompany()) {
+            $school = [
+                'id' => $company->id,
+                'name' => $company->name,
             ];
         }
         return $school;
