@@ -174,7 +174,7 @@ class User extends Authenticatable implements JWTSubject, CanResetPassword
 
     public function getFullName()
     {
-        return $this->userData->getFullName();
+        return $this->name ?? $this->userData?->getFullName();
     }
 
     public function getProfileImageUrl()
