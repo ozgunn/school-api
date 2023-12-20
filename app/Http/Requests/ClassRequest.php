@@ -14,7 +14,7 @@ class ClassRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            'name' => 'required|string|min:3|max:100',
+            'name' => 'required|string|min:1|max:50',
             'school_id' => 'required|integer',
             'group_id' => 'required|integer',
             'teacher_id' => 'nullable|integer',

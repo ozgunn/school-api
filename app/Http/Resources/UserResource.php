@@ -15,9 +15,9 @@ class UserResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return [
+        $data = [
             'id' => $this->id,
-            'name' => $this->userData->first_name . " " . $this->userData->last_name,
+            'name' => $this->name,
             'email' => $this->email,
             'role' => User::ROLES[$this->role],
             'role_id' => $this->role,
@@ -32,15 +32,27 @@ class UserResource extends JsonResource
             'company' => $this->getCompanyData(),
             'image' => $this->getProfileImageUrl(),
         ];
+        if ($this->role == User::ROLE_TEACHER) {
+            $data = array_merge($data, [
+                'class' => $this->getClassData(),
+            ]);
+        }
+        if ($this->role == User::ROLE_PARENT) {
+            $data = array_merge($data, [
+                'student' => $this->getStudentData(),
+            ]);
+        }
+
+        return $data;
     }
 
     public function getUserData()
     {
         // Ortak alanlar
         $userData = [
-            "first_name" => $this->userData->first_name,
-            "last_name" => $this->userData->last_name,
-            "address" => $this->userData->address,
+            "first_name" => $this->userData?->first_name,
+            "last_name" => $this->userData?->last_name,
+            "address" => $this->userData?->address,
         ];
 
         if ($this->role === User::ROLE_ADMIN) {
@@ -77,5 +89,31 @@ class UserResource extends JsonResource
             ];
         }
         return $school;
+    }
+
+    public function getClassData()
+    {
+        $class = null;
+        if ($c = $this->teachersClass) {
+            $class = [
+                'id' => $c->id,
+                'name' => $c->name,
+                'student_count' => $c->students->count(),
+            ];
+        }
+        return $class;
+    }
+
+    public function getStudentData()
+    {
+        $students = $this->getParentsStudents()->get();
+        $studentsArr = [];
+        foreach ($students as $s) {
+            $studentsArr[] = [
+                'id' => $s->id,
+                'name' => $s->name,
+            ];
+        }
+        return $studentsArr;
     }
 }

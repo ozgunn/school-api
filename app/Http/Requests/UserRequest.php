@@ -59,7 +59,10 @@ class UserRequest extends FormRequest
             'role' => [
                 'required',
                 Rule::in(array_keys(User::ROLES)),
-            ]
+            ],
+            'school_id' => [
+                'nullable', 'integer',
+            ],
         ];
 
         $userIdentifier = config('app.user_identifier');

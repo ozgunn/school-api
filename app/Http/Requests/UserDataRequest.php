@@ -16,8 +16,6 @@ class UserDataRequest extends FormRequest
 
     public function rules()
     {
-        $userId = Auth::id();
-
         $rules = [
             'first_name' => 'required|string|min:3|max:50',
             'last_name' => 'required|string|min:2|max:50',
@@ -25,7 +23,7 @@ class UserDataRequest extends FormRequest
         ];
 
         if ($this->input('role') === User::ROLE_TEACHER) {
-            //$rules['deneme'] = 'required';
+            $rules = [];
         }
 
         return $rules;

@@ -25,6 +25,10 @@ class ClassResource extends JsonResource
                 'id' => $this->group->id,
                 'name' => $this->group->name,
             ],
+            'teacher' => [
+                'id' => $this->teacher?->id,
+                'name' => $this->teacher?->name,
+            ],
         ];
 
         return $response;

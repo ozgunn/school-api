@@ -13,6 +13,7 @@ use App\Models\UserData;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
@@ -24,7 +25,7 @@ class UserController extends BaseController
     public function index(Request $request)
     {
         $user = $this->getUser();
-        $schools = $user->schools()->get()->pluck('id')->toArray();
+        $schools = $user->schools()->get(['id'])->pluck('id')->unique()->toArray();
 
         $filters = $request->validate([
             'school_id' => [
@@ -53,12 +54,12 @@ class UserController extends BaseController
             $users->where('role', $filters['role']);
         }
 
-        $allowedSort = ['id', 'name', 'email', 'created_at'];
-        $users = Paginator::sort($request, $users, $allowedSort)->paginate(config('app.defaults.pageSize'));
+//        $allowedSort = ['id', 'name', 'email', 'created_at'];
+//        $users = Paginator::sort($request, $users, $allowedSort)->paginate(config('app.defaults.pageSize'));
 
         $data = [
-            'users' => UserResource::collection($users),
-            'pagination' => Paginator::paginate($users)
+            'users' => UserResource::collection($users->get()),
+            //'pagination' => Paginator::paginate($users)
         ];
         return $this->sendResponse($data);
     }
@@ -91,9 +92,9 @@ class UserController extends BaseController
         try {
             $result = DB::transaction(function () use ($validated, $userData) {
                 $user = User::create($validated);
-                $user->userData()->create($userData);
+                if (!empty($userData)) $user->userData()->create($userData);
                 if ($school_id = $validated['school_id']) {
-                    $school = School::find($school_id)->firstOrFail();
+                    $school = School::findOrFail($school_id); // TODO: kontrol et
 
                     $school->users()->attach($user, [
                         'role' => $user->role,

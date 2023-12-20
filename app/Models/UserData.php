@@ -30,6 +30,8 @@ class UserData extends Model
         'first_name',
         'last_name',
         'address',
+        'country',
+        'city',
     ];
 
     protected $guarded = ['id', 'user_id'];

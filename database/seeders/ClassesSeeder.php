@@ -36,7 +36,60 @@ class ClassesSeeder extends Seeder
                 'group_id' => 1,
                 'school_id' => 2
             ],
-
+            [
+                'id' => 101,
+                'name' => '3K',
+                'group_id' => 101,
+                'school_id' => 101
+            ],
+            [
+                'id' => 102,
+                'name' => '4A',
+                'group_id' => 102,
+                'school_id' => 101
+            ],
+            [
+                'id' => 103,
+                'name' => '4B',
+                'group_id' => 102,
+                'school_id' => 101
+            ],
+            [
+                'id' => 104,
+                'name' => '4C',
+                'group_id' => 102,
+                'school_id' => 101
+            ],
+            [
+                'id' => 105,
+                'name' => '5A',
+                'group_id' => 103,
+                'school_id' => 101
+            ],
+            [
+                'id' => 106,
+                'name' => '5B',
+                'group_id' => 103,
+                'school_id' => 101
+            ],
+            [
+                'id' => 107,
+                'name' => '5C',
+                'group_id' => 103,
+                'school_id' => 101
+            ],
+            [
+                'id' => 108,
+                'name' => '6A',
+                'group_id' => 104,
+                'school_id' => 101
+            ],
+            [
+                'id' => 109,
+                'name' => '6B',
+                'group_id' => 104,
+                'school_id' => 101
+            ],
         ];
     }
 }
