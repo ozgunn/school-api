@@ -20,5 +20,6 @@
     "Updated successfully": "Güncelleme başarılı",
     "Update failed": "Güncelleme işlemi başarısız!",
     "Uploaded successfully": "Yükleme başarılı",
-    "Error": "Hata"
+    "Error": "Hata",
+    "Your password reset code: :code": "Şifre yenileme için kod: :code"
 }

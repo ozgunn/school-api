@@ -9,6 +9,7 @@ use App\Http\Resources\UserResource;
 use App\Http\Resources\UserSchoolsCollection;
 use App\Models\User;
 use App\Models\UserDevice;
+use App\Services\Sms\SmsModel;
 use Carbon\Carbon;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Notifications\ResetPassword;
@@ -175,13 +176,13 @@ class AuthController extends BaseController
             ]);
 
             $to = config('app.defaults.phone_code') . $request->phone_number;
-            $message = __("Your password reset code: ") . $token;
+            $message = __("Your password reset code: :code", ['code' => $token]);
 
             // Send sms
-            //$sms = new SmsModel($to, $message);
-            //$sms->send();
+            $sms = new SmsModel($to, $message);
+            $sms->send();
 
-            return $this->sendResponse(__('SMS sent'. $token));
+            return $this->sendResponse(__('SMS sent'.$token));
         }
 
         if (config('app.user_identifier') == 'email') {

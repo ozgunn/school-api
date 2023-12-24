@@ -11,9 +11,9 @@ class NetgsmService implements SmsInterface
 
     public function __construct()
     {
-        $this->username = "8503046767";
-        $this->password = "Y4.-E1-5";
-        $this->header = "8503046767";
+        $this->username = env("SMS_SERVICE_USERNAME");
+        $this->password = env("SMS_SERVICE_PASSWORD");
+        $this->header = env("SMS_SERVICE_HEADER");
         $this->apiURL = "https://api.netgsm.com.tr/sms/send/get";
     }
 
