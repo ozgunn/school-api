@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PasswordUpdateRequest;
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Http\Requests\UserRequest;
 use App\Http\Resources\UserResource;
@@ -123,6 +124,26 @@ class AuthController extends BaseController
         return $this->sendResponse(new UserResource($user), __('User updated successfully.'));
     }
 
+    public function updatePassword (PasswordUpdateRequest $request)
+    {
+        /** @var User $user */
+        $user = Auth::user();
+
+        $oldPasswordHash = $user->password;
+
+        $validated = $request->validated();
+
+        if (Hash::check($request->input('old_password'), $oldPasswordHash)) {
+            $user->password = bcrypt($request->input('new_password'));
+            $user->save();
+            Log::info('password update', ['user' => $user->id, 'ip' => \request()->ip()]);
+
+            return $this->sendResponse(__('Password updated successfully.'));
+        }
+
+        return $this->sendError(__('Your current password is incorrect!'));
+    }
+
     public function resetPassword(Request $request)
     {
         // TODO: Country Code
@@ -130,6 +151,12 @@ class AuthController extends BaseController
             $this->validate($request, [
                 'phone_number' => 'required',
             ]);
+
+            $checkUserExists = User::where(['phone_number' =>  $request->phone_number, 'status' => User::STATUS_ACTIVE])->first();
+
+            if (!$checkUserExists) {
+                return $this->sendError(__('User not found'));
+            }
 
             $checkIfExists = DB::table('password_resets')
                 ->where('email', $request->phone_number)
@@ -154,7 +181,7 @@ class AuthController extends BaseController
             //$sms = new SmsModel($to, $message);
             //$sms->send();
 
-            return $this->sendResponse(__('SMS sent'));
+            return $this->sendResponse(__('SMS sent'. $token));
         }
 
         if (config('app.user_identifier') == 'email') {
