@@ -104,13 +104,13 @@ class DailyController extends BaseController
             abort(404);
 
         $student = Student::where(['id' => $id, 'class_id' => $user->teachersClass->id])->firstOrFail();
-
         $report = DailyReport::where(['student_id' => $student->id])
             ->where('date', $date)
             ->first();
 
         if (!$report) {
             $report = new DailyReport();
+            $report->date = $date;
         }
         $data = $report ? new DailyResource($report) : null;
 
