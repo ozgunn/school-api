@@ -16,7 +16,7 @@ class DailyReportRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            'note' => 'required|string|min:3|max:255',
+            'note' => 'required|string|min:3',
             'selected_notes' => 'nullable|array|max:40',
             'selected_notes.*' => 'integer|distinct',
         ];
