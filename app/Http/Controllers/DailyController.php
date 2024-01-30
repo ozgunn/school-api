@@ -176,7 +176,7 @@ class DailyController extends BaseController
             if ($report) {
                 $report->update([
                     'note' => $request->note,
-                    'selected_notes' => implode(',', $request->selected_notes),
+                    'selected_notes' => $request->selected_notes ? implode(',', $request->selected_notes) : null,
                 ]);
             } else {
                 $report = DailyReport::create([
@@ -186,7 +186,7 @@ class DailyController extends BaseController
                     'class_id' => $student->class_id,
                     'note' => $request->note,
                     'date' => $date,
-                    'selected_notes' => implode(',', $request->selected_notes),
+                    'selected_notes' => $request->selected_notes ? implode(',', $request->selected_notes) : null,
                 ]);
             }
 
