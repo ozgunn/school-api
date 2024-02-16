@@ -6,6 +6,7 @@ use App\Http\Components\Paginator;
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\UserRequest;
 use App\Http\Requests\UserDataRequest;
+use App\Http\Resources\ParentResource;
 use App\Http\Resources\UserResource;
 use App\Models\School;
 use App\Models\User;
@@ -36,6 +37,7 @@ class UserController extends BaseController
                 'integer',
                 Rule::in(array_keys(User::ROLES)),
             ],
+            'minimal' => 'nullable|integer',
         ]);
 
         if ($user->role === User::ROLE_SUPERADMIN) {
@@ -54,12 +56,8 @@ class UserController extends BaseController
             $users->where('role', $filters['role']);
         }
 
-//        $allowedSort = ['id', 'name', 'email', 'created_at'];
-//        $users = Paginator::sort($request, $users, $allowedSort)->paginate(config('app.defaults.pageSize'));
-
         $data = [
-            'users' => UserResource::collection($users->get()),
-            //'pagination' => Paginator::paginate($users)
+            'users' => $filters['role'] == User::ROLE_PARENT ? ParentResource::collection($users->get()) : UserResource::collection($users->get()),
         ];
         return $this->sendResponse($data);
     }
@@ -74,6 +72,8 @@ class UserController extends BaseController
         $validated['password'] = $request->filled('password')
             ? bcrypt($validated['password'])
             : bcrypt(Str::random(32));
+
+        $validated['name'] = $userData['first_name'] . ' ' . $userData['last_name'];
 
         $user = $this->getUser();
         if ($validated['role'] >= $user->role) {
@@ -128,17 +128,21 @@ class UserController extends BaseController
     /**
      * Update user.
      */
-    public function update(UserRequest $request, UserDataRequest $userDataRequest, int $id)
+    public function update(UserRequest $request, int $id, UserDataRequest $userDataRequest)
     {
         /** @var User $user */
         $user = User::findOrFail($id);
 
         $validated = $request->validated();
-        $userData = $userDataRequest->validated();
+        $userData = null;
+
+        if ($user->role == User::ROLE_PARENT) {
+            $userData = $userDataRequest->validated();
+        }
 
         $authuser = auth()->user();
 
-        if ($validated['role'] >= $authuser->role) {
+        if ($user->role >= $authuser->role) {
             return $this->sendError(__('Not allowed'), __('You are unauthorized'), 403);
         }
 
@@ -147,13 +151,18 @@ class UserController extends BaseController
         //  A kurumumun müdürü olarak B kurumunda da kayıtlı olan bir userı güncelleyebilmeli miyim?
         //  multi user sistemini kaldırmalı mıyım?
 
-        $validated['password'] = $request->filled('password') ? bcrypt($validated['password']) : null;
-        $validated['status'] = $request->filled('status') ? $validated['status'] : null;
+        if ($request->filled('password')) {
+            $validated['password'] = bcrypt($validated['password']);
+        } else {
+            unset($validated['password']);
+        }
+
+        $validated['name'] = $userData ? $userData['first_name'] . ' ' . $userData['last_name'] : $validated['name'] ;
 
         try {
             $result = DB::transaction(function () use ($user, $validated, $userData) {
                 $user->update($validated);
-                $user->userData()->update($userData);
+                if ($userData) $user->userData()->update($userData);
 
                 return new UserResource($user);
             });

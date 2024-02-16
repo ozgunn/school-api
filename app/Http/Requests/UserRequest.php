@@ -57,7 +57,7 @@ class UserRequest extends FormRequest
                 Rule::in(User::STATUSES),
             ],
             'role' => [
-                'required',
+                $userId ? 'nullable' : 'required',
                 Rule::in(array_keys(User::ROLES)),
             ],
             'school_id' => [

@@ -79,6 +79,8 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::resource('groups', \App\Http\Controllers\Admin\GroupController::class);
         Route::resource('classes', \App\Http\Controllers\Admin\ClassController::class);
         Route::post('schools/{id}/users', [\App\Http\Controllers\Admin\SchoolController::class, 'userAdd'])->name('user-add');
+        Route::resource('students', \App\Http\Controllers\Admin\StudentController::class);
+        Route::resource('buses', \App\Http\Controllers\Admin\BusController::class);
     });
 });
 

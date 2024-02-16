@@ -17,8 +17,10 @@ class UserDataRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            'first_name' => 'required|string|min:3|max:50',
-            'last_name' => 'required|string|min:2|max:50',
+            'first_name' => 'nullable|string|min:3|max:50',
+            'last_name' => 'nullable|string|min:2|max:50',
+            'country' => 'nullable|integer',
+            'city' => 'nullable|integer',
             'address' => 'nullable|string',
         ];
 

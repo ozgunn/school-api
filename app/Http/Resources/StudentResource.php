@@ -32,6 +32,15 @@ class StudentResource extends JsonResource
         if (auth()->user()->role === User::ROLE_PARENT)
             $response['teacher'] = $this->getTeacher();
 
+        if (auth()->user()->role >= User::ROLE_MANAGER) {
+            $response['teacher'] = $this->getTeacher();
+            $response['school'] = $this->getSchool();
+            $response['class'] = $this->getSchoolClass();
+            $response['parent'] = $this->getParent();
+            $response['morning_bus'] = $this->getBus(1);
+            $response['evening_bus'] = $this->getBus(2);
+        }
+
         return $response;
     }
 
@@ -39,9 +48,48 @@ class StudentResource extends JsonResource
     {
         return [
             'id' => $this->class->teacher_id,
-            'name' => $this->class->teacher->getFullName(),
-            'image' => $this->class->teacher->getProfileImageUrl(),
+            'name' => $this->class->teacher?->getFullName(),
+            'image' => $this->class->teacher?->getProfileImageUrl(),
         ];
+    }
+
+    public function getSchool()
+    {
+        return [
+            'id' => $this->school->id,
+            'name' => $this->school->name,
+        ];
+    }
+
+    public function getSchoolClass()
+    {
+        return [
+            'id' => $this->class->id,
+            'name' => $this->class->name,
+        ];
+    }
+
+    public function getParent()
+    {
+        return [
+            'id' => $this->parent->id,
+            'name' => $this->parent->userData?->first_name . ' ' . $this->parent->userData?->last_name,
+        ];
+    }
+
+    public function getBus($type=1)
+    {
+        if ($type==1) {
+            return [
+                'id' => $this->morningBus?->id,
+                'license_plate' => $this->morningBus?->license_plate,
+            ];
+        } else {
+            return [
+                'id' => $this->eveningBus?->id,
+                'license_plate' => $this->eveningBus?->license_plate,
+            ];
+        }
     }
 
 }

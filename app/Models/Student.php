@@ -67,12 +67,12 @@ class Student extends Model
         return $this->belongsTo(User::class, 'parent_id', 'id');
     }
 
-    public function getMorningBus()
+    public function morningBus()
     {
         return $this->belongsTo(Bus::class, 'morning_bus_id', 'id');
     }
 
-    public function getEveningBus()
+    public function eveningBus()
     {
         return $this->belongsTo(Bus::class, 'evening_bus_id', 'id');
     }
@@ -80,8 +80,8 @@ class Student extends Model
     public function getBuses()
     {
         return [
-            $this->getMorningBus()->first(),
-            $this->getEveningBus()->first(),
+            $this->morningBus->first(),
+            $this->eveningBus->first(),
         ];
     }
 }
