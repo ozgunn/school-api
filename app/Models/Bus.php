@@ -40,8 +40,8 @@ class Bus extends Model
         'license_plate',
         'lat',
         'long',
-        'start_date',
-        'end_date',
+        'start_time',
+        'end_time',
         'status',
     ];
 
@@ -64,7 +64,7 @@ class Bus extends Model
     ];
 
     public function teacher() {
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->belongsTo(User::class, 'teacher_id', 'id');
     }
 
     public function school() {

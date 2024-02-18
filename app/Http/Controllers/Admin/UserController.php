@@ -56,6 +56,8 @@ class UserController extends BaseController
             $users->where('role', $filters['role']);
         }
 
+        $users = Paginator::sort($request, $users, ['id', 'name'], 'asc');
+
         $data = [
             'users' => $filters['role'] == User::ROLE_PARENT ? ParentResource::collection($users->get()) : UserResource::collection($users->get()),
         ];
@@ -73,7 +75,7 @@ class UserController extends BaseController
             ? bcrypt($validated['password'])
             : bcrypt(Str::random(32));
 
-        $validated['name'] = $userData['first_name'] . ' ' . $userData['last_name'];
+        $validated['name'] = $userData ? $userData['first_name'] . ' ' . $userData['last_name'] : $validated['name'];
 
         $user = $this->getUser();
         if ($validated['role'] >= $user->role) {

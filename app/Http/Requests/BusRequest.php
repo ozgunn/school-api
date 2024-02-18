@@ -3,7 +3,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StudentRequest extends FormRequest
+class BusRequest extends FormRequest
 {
 
     public function authorize()
@@ -14,12 +14,12 @@ class StudentRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            'name' => 'required|string|min:3|max:100',
+            'license_plate' => 'required|string|min:3|max:20',
             'school_id' => 'required|integer',
-            'class_id' => 'nullable|integer',
-            'parent_id' => 'required|integer',
-            'morning_bus_id' => 'nullable|integer',
-            'evening_bus_id' => 'nullable|integer',
+            'teacher_id' => 'nullable|integer',
+            'start_time' => 'nullable|string',
+            'end_time' => 'nullable|string',
+            'status' => 'required|integer',
         ];
 
         return $rules;

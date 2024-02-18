@@ -35,6 +35,7 @@ class StudentResource extends JsonResource
         if (auth()->user()->role >= User::ROLE_MANAGER) {
             $response['teacher'] = $this->getTeacher();
             $response['school'] = $this->getSchool();
+            $response['group'] = $this->getGroup();
             $response['class'] = $this->getSchoolClass();
             $response['parent'] = $this->getParent();
             $response['morning_bus'] = $this->getBus(1);
@@ -47,9 +48,9 @@ class StudentResource extends JsonResource
     public function getTeacher()
     {
         return [
-            'id' => $this->class->teacher_id,
-            'name' => $this->class->teacher?->getFullName(),
-            'image' => $this->class->teacher?->getProfileImageUrl(),
+            'id' => $this->class?->teacher_id,
+            'name' => $this->class?->teacher?->getFullName(),
+            'image' => $this->class?->teacher?->getProfileImageUrl(),
         ];
     }
 
@@ -64,8 +65,16 @@ class StudentResource extends JsonResource
     public function getSchoolClass()
     {
         return [
-            'id' => $this->class->id,
-            'name' => $this->class->name,
+            'id' => $this->class?->id,
+            'name' => $this->class?->name,
+        ];
+    }
+
+    public function getGroup()
+    {
+        return [
+            'id' => $this->class?->group?->id,
+            'name' => $this->class?->group?->name,
         ];
     }
 

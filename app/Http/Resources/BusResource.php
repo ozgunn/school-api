@@ -19,10 +19,17 @@ class BusResource extends JsonResource
             'license_plate' => $this->license_plate,
             'lat' => $this->lat,
             'long' => $this->long,
-            'teacher' => $this->teacher?->name,
+            'teacher' => $this->teacher ? [
+                'id' => $this->teacher->id,
+                'name' => $this->teacher->name,
+            ] : [],
             'start_time' => $this->start_time,
             'end_time' => $this->end_time,
             'status' => $this->status,
+            'school' => $this->school ? [
+                'id' => $this->school->id,
+                'name' => $this->school->name,
+            ] : [],
         ];
 
         return $response;

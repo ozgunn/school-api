@@ -35,6 +35,8 @@ class Student extends Model
         'name',
         'birth_date',
         'image',
+        'morning_bus_id',
+        'evening_bus_id',
     ];
 
     protected $guarded = ['id'];

@@ -24,20 +24,20 @@ class StudentController extends BaseController
         $query = $this->findUserStudents();
 
         $data = [
-            'students' => StudentResource::collection($query),
+            'students' => StudentResource::collection($query->get()),
         ];
 
         return $this->sendResponse($data);
     }
 
     /**
-     * Display user's school
+     * Display student
      */
     public function show(int $id)
     {
-        $school = $this->findUserSchool($id);
+        $student = $this->findUserStudent($id);
 
-        $data = new SchoolResource($school);
+        $data = new StudentResource($student);
 
         return $this->sendResponse($data);
     }
@@ -47,8 +47,6 @@ class StudentController extends BaseController
      */
     public function store(StudentRequest $request)
     {
-        $user = auth()->user();
-
         $validated = $request->validated();
 
         $student = Student::create($validated);
@@ -63,19 +61,14 @@ class StudentController extends BaseController
     /**
      * Update user.
      */
-    public function update(SchoolRequest $request, int $id)
+    public function update(StudentRequest $request, int $id)
     {
-        $user = auth()->user();
-        if ($user->role < User::ROLE_ADMIN) {
-            return $this->sendError(__('Not allowed'), __('You are unauthorized'), 403);
-        }
-
-        $school = $this->findUserSchool($id);
+        $student = $this->findUserStudent($id);
         $validated = $request->validated();
 
-        $school->update($validated);
+        $student->update($validated);
 
-        return $this->sendResponse(new SchoolResource($school), __('School updated successfully.'));
+        return $this->sendResponse(new StudentResource($student), __('Student updated successfully.'));
     }
 
     /**
@@ -83,23 +76,12 @@ class StudentController extends BaseController
      */
     public function destroy(int $id)
     {
-        $user = auth()->user();
-        if ($user->role < User::ROLE_ADMIN) {
-            return $this->sendError(__('Not allowed'), __('You are unauthorized'), 403);
-        }
-
-        $school = $this->findUserSchool($id);
-        $userCount = $school->users()->count();
-        $studentCount = $school->students()->count();
-
-        if ($user->role < User::ROLE_SUPERADMIN && ( $userCount || $studentCount )) {
-            return $this->sendError(__('Delete failed'), __("School has users ({$userCount}) or students ({$studentCount})"));
-        }
+        $student = $this->findUserStudent($id);
 
         try {
-            $school->delete();
+            $student->delete();
 
-            return $this->sendResponse(__('Deleted'), __('School deleted successfully.'));
+            return $this->sendResponse(__('Deleted'), __('Student deleted successfully.'));
         } catch (\Exception $e) {
             return $this->sendError(__('Delete failed'), $e->getMessage());
         }
@@ -111,23 +93,26 @@ class StudentController extends BaseController
         $schools = $user->getSchools()->pluck('id')->toArray();
 
         if ($user->role === User::ROLE_SUPERADMIN) {
-            $students = Student::with(['school', 'class', 'parent', 'class.teacher', 'morningBus', 'eveningBus'])->all();
+            $students = Student::with(['school', 'class', 'parent', 'class.teacher', 'morningBus', 'eveningBus']);
         } else {
-            $students = Student::with(['school', 'class', 'parent', 'class.teacher', 'morningBus', 'eveningBus'])->whereIn('school_id', $schools)->get();
+            $students = Student::with(['school', 'class', 'parent', 'class.teacher', 'morningBus', 'eveningBus'])->whereIn('school_id', $schools);
         }
 
         return $students;
     }
 
-    private function findUserSchool(int $id)
+    private function findUserStudent(int $id)
     {
         $user = auth()->user();
+        $schools = $user->getSchools()->pluck('id')->toArray();
+
         if ($user->role === User::ROLE_SUPERADMIN) {
-            $school = School::where(['id' => $id])->firstOrFail();
+            $student = Student::where(['id' => $id])->firstOrFail();
         } else {
-            $school = $user->schools()->whereNotNull('parent_id')->where(['school_id' => $id])->firstOrFail();
+            $student = Student::with(['school', 'class', 'parent', 'class.teacher', 'morningBus', 'eveningBus'])
+                ->where(['id' => $id])->whereIn('school_id', $schools)->first();
         }
 
-        return $school;
+        return $student;
     }
 }
