@@ -8,6 +8,7 @@ use App\Http\Resources\GroupResource;
 use App\Models\Group;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class GroupController extends BaseController
 {
@@ -53,6 +54,8 @@ class GroupController extends BaseController
         $group = Group::create($validated);
 
         if ($group) {
+            Log::channel('db')->info('Group created', ['id' => $group->id]);
+
             return $this->sendResponse(new GroupResource($group), __('Created successfully'));
         } else {
             return $this->sendError(__("Create Failed"), __('Create Failed'));
@@ -75,6 +78,7 @@ class GroupController extends BaseController
         }
 
         $group->update($validated);
+        Log::channel('db')->info('Group updated', ['id' => $group->id]);
 
         return $this->sendResponse(new GroupResource($group), __('Updated successfully.'));
     }
@@ -96,6 +100,7 @@ class GroupController extends BaseController
 
         try {
             $group->delete();
+            Log::channel('db')->info('Group deleted', ['id' => $group->id]);
 
             return $this->sendResponse(__('Deleted'), __('Deleted successfully'));
         } catch (\Exception $e) {

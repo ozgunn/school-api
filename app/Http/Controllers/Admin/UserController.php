@@ -75,27 +75,28 @@ class UserController extends BaseController
             ? bcrypt($validated['password'])
             : bcrypt(Str::random(32));
 
-        $validated['name'] = $userData ? $userData['first_name'] . ' ' . $userData['last_name'] : $validated['name'];
+        $validated['name'] = $userData ? $userData['first_name'] . ' ' . $userData['last_name'] : $validated['name'] ?? null;
 
         $user = $this->getUser();
-        if ($validated['role'] >= $user->role) {
+        if ($validated['role'] > $user->role) {
             return $this->sendError(__('Not allowed'), __('You are unauthorized'), 403);
         }
 
         $schools = $user->schools()->get()->pluck('id')->toArray();
 
-        $validated = array_merge($validated, $request->validate([
-            'school_id' => [
-                'integer',
-                Rule::in($schools),
-            ],
-        ]));
+        if (isset($validated['school_ids']) && array_diff($validated['school_ids'], $schools)) {
+            return $this->sendError(__('Not allowed'), __('Invalid school'), 403);
+        }
+
+        if (isset($validated['school_id'])) {
+            $validated['school_ids'][] = $validated['school_id'];
+        }
 
         try {
             $result = DB::transaction(function () use ($validated, $userData) {
                 $user = User::create($validated);
                 if (!empty($userData)) $user->userData()->create($userData);
-                if ($school_id = $validated['school_id']) {
+                foreach ($validated['school_ids'] as $school_id) {
                     $school = School::findOrFail($school_id); // TODO: kontrol et
 
                     $school->users()->attach($user, [
@@ -105,11 +106,13 @@ class UserController extends BaseController
                     ]);
                 }
 
+                Log::channel('db')->info('User created', ['id' => $user->id]);
                 return new UserResource($user);
             });
 
             return $this->sendResponse($result, 'User created successfully');
         } catch (\Exception $exception) {
+            Log::channel('db')->error('User create failed', ['error' => $exception->getMessage()]);
             return $this->sendError(__('Create failed'), 'User create failed.'. $exception->getMessage());
         }
     }
@@ -165,12 +168,14 @@ class UserController extends BaseController
             $result = DB::transaction(function () use ($user, $validated, $userData) {
                 $user->update($validated);
                 if ($userData) $user->userData()->update($userData);
+                Log::channel('db')->info('User updated', ['id' => $user->id]);
 
                 return new UserResource($user);
             });
 
             return $this->sendResponse($result, 'User updated successfully');
         } catch (\Exception $exception) {
+            Log::channel('db')->error('User update failed', ['error' => $exception->getMessage()]);
             return $this->sendError(__('Update failed'), 'User update failed.' . $exception->getMessage());
         }
     }
@@ -184,9 +189,12 @@ class UserController extends BaseController
 
         try {
             $user->delete();
+            Log::channel('db')->info('User deleted', ['id' => $user->id]);
 
             return $this->sendResponse(__('Deleted'), __('User deleted successfully.'));
         } catch (\Exception $e) {
+            Log::channel('db')->error('User delete failed', ['error' => $e->getMessage()]);
+
             return $this->sendError(__('Delete failed'), $e->getMessage());
         }
     }

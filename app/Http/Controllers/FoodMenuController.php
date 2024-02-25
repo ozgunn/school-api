@@ -18,10 +18,7 @@ class FoodMenuController extends BaseController
         $startDate = now()->startOfMonth();
         $endDate = now()->endOfMonth();
 
-        $student = $user->getParentsStudent();
-
-        $menu = FoodMenu::where('school_id', $student->school_id)
-            ->whereNull('parent_id')
+        $menu = FoodMenu::whereNull('parent_id')
             ->whereDate('date', '>=', $startDate)
             ->whereDate('date', '<=', $endDate)
             ->orderByDesc('date')
@@ -50,10 +47,7 @@ class FoodMenuController extends BaseController
 
         $user = auth()->user();
 
-        $student = $user->getParentsStudent();
-
-        $menu = FoodMenu::where('school_id', $student->school_id)
-            ->whereNull('parent_id')
+        $menu = FoodMenu::whereNull('parent_id')
             ->whereDate('date', '=', $date)
             ->with('parent')
             ->first();

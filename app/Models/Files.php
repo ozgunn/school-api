@@ -59,6 +59,7 @@ class Files extends Model
         'ip',
         'publish_year',
         'publish_month',
+        'lang',
     ];
 
     protected $guarded = ['id'];

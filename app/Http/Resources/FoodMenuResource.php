@@ -18,6 +18,7 @@ class FoodMenuResource extends JsonResource
     {
         $response = [
             'id' => $this->id,
+            'lang' => $this->lang,
             'school_id' => $this->school_id,
             'date' => date('Y-m-d', strtotime($this->date)),
             'items' => $this->decorateMeals(),

@@ -10,6 +10,7 @@ use App\Models\School;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class SchoolController extends BaseController
 {
@@ -69,6 +70,8 @@ class SchoolController extends BaseController
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now()
             ]);
+
+            Log::channel('db')->info('School created', ['id' => $school->id]);
 
             return $this->sendResponse(new SchoolResource($school), __('School created successfully'));
         } else {

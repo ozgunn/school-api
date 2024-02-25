@@ -8,6 +8,7 @@ use App\Http\Resources\BusResource;
 use App\Models\Bus;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 
 class BusController extends BaseController
@@ -60,8 +61,10 @@ class BusController extends BaseController
         $bus = Bus::create($validated);
 
         if ($bus) {
+            Log::channel('db')->info('Bus created', ['id' => $bus->id]);
             return $this->sendResponse(new BusResource($bus), __('Bus created successfully'));
         } else {
+            Log::channel('db')->info('Bus create failed');
             return $this->sendError(__("Create Failed"), __('Create Failed'));
         }
     }
@@ -75,6 +78,7 @@ class BusController extends BaseController
         $validated = $request->validated();
 
         $bus->update($validated);
+        Log::channel('db')->info('Bus updated', ['id' => $bus->id]);
 
         return $this->sendResponse(new BusResource($bus), __('Bus updated successfully.'));
     }
@@ -88,9 +92,11 @@ class BusController extends BaseController
 
         try {
             $bus->delete();
+            Log::channel('db')->info('Bus deleted', ['id' => $bus->id]);
 
             return $this->sendResponse(__('Deleted'), __('Bus deleted successfully.'));
         } catch (\Exception $e) {
+            Log::channel('db')->error('Bus delete failed', ['error' => $e->getMessage()]);
             return $this->sendError(__('Delete failed'), $e->getMessage());
         }
     }

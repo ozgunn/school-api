@@ -81,6 +81,8 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::post('schools/{id}/users', [\App\Http\Controllers\Admin\SchoolController::class, 'userAdd'])->name('user-add');
         Route::resource('students', \App\Http\Controllers\Admin\StudentController::class);
         Route::resource('buses', \App\Http\Controllers\Admin\BusController::class);
+        Route::resource('files', \App\Http\Controllers\Admin\FilesController::class);
+        Route::resource('food-menu', \App\Http\Controllers\Admin\FoodMenuController::class);
     });
 });
 

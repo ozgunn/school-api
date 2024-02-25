@@ -13,6 +13,7 @@ use App\Models\Student;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class StudentController extends BaseController
 {
@@ -52,8 +53,12 @@ class StudentController extends BaseController
         $student = Student::create($validated);
 
         if ($student) {
+            Log::channel('db')->info('Student created', ['id' => $student->id]);
+
             return $this->sendResponse(new StudentResource($student), __('Student created successfully'));
         } else {
+            Log::channel('db')->error('Student create failed');
+
             return $this->sendError(__("Create Failed"), __('Create Failed'));
         }
     }
@@ -67,6 +72,7 @@ class StudentController extends BaseController
         $validated = $request->validated();
 
         $student->update($validated);
+        Log::channel('db')->info('Student updated', ['id' => $student->id]);
 
         return $this->sendResponse(new StudentResource($student), __('Student updated successfully.'));
     }
@@ -80,9 +86,12 @@ class StudentController extends BaseController
 
         try {
             $student->delete();
+            Log::channel('db')->info('Student deleted', ['id' => $student->id]);
 
             return $this->sendResponse(__('Deleted'), __('Student deleted successfully.'));
         } catch (\Exception $e) {
+            Log::channel('db')->error('Student delete failed', ['error' => $e->getMessage()]);
+
             return $this->sendError(__('Delete failed'), $e->getMessage());
         }
     }

@@ -63,6 +63,9 @@ class UserRequest extends FormRequest
             'school_id' => [
                 'nullable', 'integer',
             ],
+            'school_ids' => [
+                'nullable', 'array',
+            ],
         ];
 
         $userIdentifier = config('app.user_identifier');

@@ -11,6 +11,7 @@ use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class DailyController extends BaseController
 {
@@ -40,6 +41,7 @@ class DailyController extends BaseController
         }
 
         $data = $report ? new DailyResource($report) : null;
+        Log::channel('db')->info('daily viewed', ['student' => $student->id, 'ip' => \request()->ip()]);
 
         return $this->sendResponse($data);
 
@@ -63,6 +65,7 @@ class DailyController extends BaseController
             ->get();
 
         $data = DailyAllResource::collection($report);
+        Log::channel('db')->info('daily all viewed', ['student' => $student->id, 'ip' => \request()->ip()]);
 
         return $this->sendResponse($data);
 
@@ -113,6 +116,7 @@ class DailyController extends BaseController
             $report->date = $date;
         }
         $data = $report ? new DailyResource($report) : null;
+        Log::channel('db')->info('daily viewed', ['student' => $student->id, 'ip' => \request()->ip()]);
 
         return $this->sendResponse($data);
 
@@ -137,6 +141,7 @@ class DailyController extends BaseController
             ->get();
 
         $data = DailyAllResource::collection($report);
+        Log::channel('db')->info('daily all viewed', ['student' => $student->id, 'ip' => \request()->ip()]);
 
         return $this->sendResponse($data);
 
@@ -178,6 +183,7 @@ class DailyController extends BaseController
                     'note' => $request->note,
                     'selected_notes' => $request->selected_notes ? implode(',', $request->selected_notes) : null,
                 ]);
+                Log::channel('db')->info('daily updated', ['student' => $student->id, 'ip' => \request()->ip()]);
             } else {
                 $report = DailyReport::create([
                     'user_id' => $user->id,
@@ -188,9 +194,11 @@ class DailyController extends BaseController
                     'date' => $date,
                     'selected_notes' => $request->selected_notes ? implode(',', $request->selected_notes) : null,
                 ]);
+                Log::channel('db')->info('daily created', ['student' => $student->id, 'ip' => \request()->ip()]);
             }
 
         } catch (\Exception $exception) {
+            Log::channel('db')->error('daily create failed', ['student' => $student->id, 'ip' => \request()->ip()]);
             return $this->sendError($exception->getMessage());
         }
 

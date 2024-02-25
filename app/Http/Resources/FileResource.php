@@ -24,6 +24,7 @@ class FileResource extends JsonResource
             'publish_year' => $this->publish_year,
             'publish_month' => $this->publish_month,
             'title' => $this->description ?? $this->getTitle(),
+            'type' => $this->type,
             'lang' => $this->lang,
         ];
 

@@ -5,6 +5,7 @@ namespace App\Models;
 use Carbon\Traits\Timestamp;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property integer $id
@@ -19,7 +20,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class FoodMenu extends Model
 {
-    use HasFactory, Timestamp;
+    use HasFactory, Timestamp, SoftDeletes;
 
     const LANG_TR = 'tr';
     const LANG_EN = 'en';

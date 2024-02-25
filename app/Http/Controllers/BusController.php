@@ -6,6 +6,7 @@ use App\Http\Resources\BusResource;
 use App\Models\Bus;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 
 class BusController extends BaseController
@@ -39,6 +40,7 @@ class BusController extends BaseController
                 $data = BusResource::collection($busArr);
             }
         }
+        Log::channel('db')->info('bus list', ['user' => $user->id, 'ip' => \request()->ip()]);
 
         return $this->sendResponse($data);
     }
@@ -70,11 +72,15 @@ class BusController extends BaseController
             if ($previousStatus == Bus::STATUS_PASSIVE && $request->status == Bus::STATUS_ACTIVE) {
                 // TODO: Servisi kullanan tüm kullanıcıların tüm devicelarına notification gönderilecekse, queue yapısı kurulmalı.
                 // $user->sendPushNotification('Servis harekete geçti', 'Servisiniz harekete geçmiştir', 'schoolbus');
+
+                Log::channel('db')->info('bus started', ['user' => $user->id, 'bus' => $bus->id, 'ip' => \request()->ip()]);
             }
 
             // Bus arrived
             if ($previousStatus == Bus::STATUS_ACTIVE && $request->status == Bus::STATUS_PASSIVE) {
                 // $user->sendPushNotification('Servis harekete geçti', 'Servisiniz harekete geçmiştir', 'schoolbus');
+
+                Log::channel('db')->info('bus arrived', ['user' => $user->id, 'bus' => $bus->id, 'ip' => \request()->ip()]);
             }
 
             return $this->sendResponse($result);

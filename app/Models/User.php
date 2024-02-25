@@ -10,6 +10,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Laravel\Firebase\Facades\Firebase;
+use Laravel\Sanctum\HasApiTokens;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Support\Facades\Log as Log;
 
@@ -27,7 +28,7 @@ use Illuminate\Support\Facades\Log as Log;
 
 class User extends Authenticatable implements JWTSubject, CanResetPassword
 {
-    use HasFactory, Notifiable, SoftDeletes;
+    use HasFactory, Notifiable, SoftDeletes, HasApiTokens;
 
     const PATH = '/images/user/';
     const IMAGE_DEFAULT_USER = 'default-user.png';

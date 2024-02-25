@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\FileResource;
 use App\Models\Files;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class FilesController extends BaseController
 {
@@ -25,6 +26,7 @@ class FilesController extends BaseController
             ->get();
 
         $data = FileResource::collection($pdfs);
+        Log::channel('db')->info('parent newspapers listed', ['ip' => \request()->ip()]);
 
         return $this->sendResponse($data);
     }
@@ -49,6 +51,7 @@ class FilesController extends BaseController
             ->get();
 
         $data = FileResource::collection($pdfs);
+        Log::channel('db')->info('group newspapers listed', ['ip' => \request()->ip()]);
 
         return $this->sendResponse($data);
     }

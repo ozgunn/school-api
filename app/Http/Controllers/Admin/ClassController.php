@@ -8,6 +8,7 @@ use App\Http\Resources\ClassResource;
 use App\Models\SchoolClass;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ClassController extends BaseController
 {
@@ -53,8 +54,10 @@ class ClassController extends BaseController
         $item = SchoolClass::create($validated);
 
         if ($item) {
+            Log::channel('db')->info('Class created', ['id' => $item->id]);
             return $this->sendResponse(new ClassResource($item), __('Created successfully'));
         } else {
+            Log::channel('db')->error('Class create failed');
             return $this->sendError(__("Create Failed"), __('Create Failed'));
         }
     }
@@ -75,6 +78,7 @@ class ClassController extends BaseController
         }
 
         $item->update($validated);
+        Log::channel('db')->info('Class updated', ['id' => $item->id]);
 
         return $this->sendResponse(new ClassResource($item), __('Updated successfully.'));
     }
@@ -96,6 +100,7 @@ class ClassController extends BaseController
 
         try {
             $item->delete();
+            Log::channel('db')->info('Class deleted', ['id' => $item->id]);
 
             return $this->sendResponse(__('Deleted'), __('Deleted successfully'));
         } catch (\Exception $e) {
