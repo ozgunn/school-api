@@ -57,11 +57,6 @@ class SchoolController extends BaseController
         // Parent_id (company) control
         $validated['parent_id'] = $user->getCompany()->id;
 
-        $userCompanies = $user->getCompanies()->pluck('id')->toArray();
-        if (!in_array($validated['parent_id'], $userCompanies)) {
-            return $this->sendError(__('Not allowed'), __('You are unauthorized'), 403);
-        }
-
         $school = School::create($validated);
 
         if ($school) {
