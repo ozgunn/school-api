@@ -16,10 +16,10 @@ class FilesController extends BaseController
     {
         $user = auth()->user();
 
-        $school = $user->getSchool();
+        //$school = $user->getSchool();
 
         $pdfs = Files::where('type', Files::TYPE_PDF_PARENTS)
-            ->where('school_id', $school->id)
+            //->where('school_id', $school->id)
             ->orderByDesc('publish_year')
             ->orderByDesc('publish_month')
             ->limit(12)
@@ -38,12 +38,12 @@ class FilesController extends BaseController
     {
         $user = auth()->user();
 
-        $school = $user->getSchool();
+        //$school = $user->getSchool();
 
         $group_id = $user->getParentsStudent()->class->group_id;
 
         $pdfs = Files::where('type', Files::TYPE_PDF_GROUPS)
-            ->where('school_id', $school->id)
+           // ->where('school_id', $school->id)
             ->where('group_id', $group_id)
             ->orderByDesc('publish_year')
             ->orderByDesc('publish_month')

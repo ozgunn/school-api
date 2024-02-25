@@ -19,7 +19,8 @@ class FilesController extends BaseController
      */
     public function index(Request $request)
     {
-        $pdfs = $this->findResource();
+        $type = $request->type;
+        $pdfs = $this->findResourceByType($type);
 
         $data = FileResource::collection($pdfs);
 
@@ -42,20 +43,21 @@ class FilesController extends BaseController
     {
         $validated = $request->validated();
 
-        if (!in_array($request->school_id, $this->userSchools())) {
-            return $this->sendError(trans('Error'), trans('Not allowed'));
-        }
+//        if (!in_array($request->school_id, $this->userSchools())) {
+//            return $this->sendError(trans('Error'), trans('Not allowed'));
+//        }
 
         if (!$request->pdf) {
             return $this->sendError(trans('Error'), trans('File not selected'));
         }
 
         $pdf = $request->file('pdf');
+        $validated['lang'] = $request->lang ?? config('app.languages')[0];
 
         $pdfFileName = $request->publish_year . '-' .
             $request->publish_month . '-' .
             $request->type . '-' .
-            $request->lang . '.' .
+            $validated['lang'] . '.' .
             $pdf->getClientOriginalExtension();
         $result = $pdf->storeAs(self::PATH, $pdfFileName, 'public');
 
@@ -131,6 +133,18 @@ class FilesController extends BaseController
         }
 
         return $resource;
+    }
+
+    private function findResourceByType($type = null)
+    {
+        $resource = Files::with('group')
+            ->orderByDesc('id');
+
+        if ($type && in_array($type, Files::TYPES)) {
+            $resource = $resource->where('type', $type);
+        }
+
+        return $resource->get();
     }
 
 

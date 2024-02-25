@@ -26,6 +26,11 @@ class FileResource extends JsonResource
             'title' => $this->description ?? $this->getTitle(),
             'type' => $this->type,
             'lang' => $this->lang,
+            'group' => $this->group ? [
+                'id' => $this->group->id,
+                'name' => $this->group->name,
+            ] : null,
+            'created_at' => $this->created_at,
         ];
 
         return $response;
