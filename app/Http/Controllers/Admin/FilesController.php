@@ -56,9 +56,14 @@ class FilesController extends BaseController
 
         $pdfFileName = $request->publish_year . '-' .
             $request->publish_month . '-' .
-            $request->type . '-' .
-            $validated['lang'] . '.' .
+            $request->type . '-' ;
+
+        if ($request->group_id && $request->type == Files::TYPE_PDF_GROUPS) {
+            $pdfFileName .= $request->group_id . '-';
+        }
+        $pdfFileName .= $validated['lang'] . '.' .
             $pdf->getClientOriginalExtension();
+
         $result = $pdf->storeAs(self::PATH, $pdfFileName, 'public');
 
         if (!$result) {
@@ -123,12 +128,10 @@ class FilesController extends BaseController
     private function findResource($id = null)
     {
         if ($id) {
-            $resource = Files::whereIn('school_id', $this->userSchools())
-                ->where('id', $id)
+            $resource = Files::where('id', $id)
                 ->firstOrFail();
         } else {
-            $resource = Files::whereIn('school_id', $this->userSchools())
-                ->orderByDesc('id')
+            $resource = Files::orderByDesc('id')
                 ->get();
         }
 
