@@ -91,16 +91,16 @@ class ImportCommand extends Command
     public function getList($schoolId, $classId)
     {
         $list[102][15] = [
-            ["Özge", 	"AYDIN",		"ozge_karagoz@windowslive.com",	"5543808804", "Altay Aydın"],
-            ["DAMLA",	"KÖYSÜREN",	"damlagoksu07@hotmail.com",	"5322080392", "Ayliz KÖYSÜREN"],
-            ["ECEM",		"DAĞYAR",		"ecem@dagyar.com",	"5367428945", "Bal Kayla Dağyar"],
-            ["REMZİYE", 	"ERGÜÇ",		"eyis333@hotmail.com",	"5334746604", "Gani Ergüç"],
-            ["GİZEM",	"ÖZÜŞ",		"gizemozus@gmail.com",	"5375780060", "Aslan Özüş"],
-            ["OLENA", 	"TONTU",		"alenaumanets@gmail.com",	"5392051094", "Aliz Tontu"],
-            ["GAMZE",	"SÜZME",		"gamzearat81@hotmail.com",	"5345407676", "Nefes  Süzme"],
-            ["YASEMİN",	"RITTMEYER",	"zemaltinay@gmail.com",	"5336414620", "Oliver RITTMEYER"],
-            ["HAZAL",	"CENGİZ",		"",	"5302090330", "Lina Cengiz"],
-            ["EVRİM", 	"ATILGAN",		"", "5326278200", "Aras Atılgan"],
+            ["Özge", "AYDIN", "ozge_karagoz@windowslive.com", "5543808804", "Altay Aydın"],
+            ["DAMLA", "KÖYSÜREN", "damlagoksu07@hotmail.com", "5322080392", "Ayliz KÖYSÜREN"],
+            ["ECEM", "DAĞYAR", "ecem@dagyar.com", "5367428945", "Bal Kayla Dağyar"],
+            ["REMZİYE", "ERGÜÇ", "eyis333@hotmail.com", "5334746604", "Gani Ergüç"],
+            ["GİZEM", "ÖZÜŞ", "gizemozus@gmail.com", "5375780060", "Aslan Özüş"],
+            ["OLENA", "TONTU", "alenaumanets@gmail.com", "5392051094", "Aliz Tontu"],
+            ["GAMZE", "SÜZME", "gamzearat81@hotmail.com", "5345407676", "Nefes  Süzme"],
+            ["YASEMİN", "RITTMEYER", "zemaltinay@gmail.com", "5336414620", "Oliver RITTMEYER"],
+            ["HAZAL", "CENGİZ", "", "5302090330", "Lina Cengiz"],
+            ["EVRİM", "ATILGAN", "", "5326278200", "Aras Atılgan"],
         ];
         $list[102][16] = [
             ["MERVE", "AYSU", " turker.merve@gmail.com", " 5319899271", " ATA AYSU"],
@@ -332,8 +332,25 @@ class ImportCommand extends Command
             ["Gamze", "Yellice", "", "5342897679", "Ali Yaman Yellice"],
         ];
 
-//        $list[101][9] = [
-//        ];
+        $list[102][17] = [
+            ["PINAR", "GÜRSOY", "pinargursoy90@hotmail.com", "5419010607", "METE GÜRSOY"],
+            ["NATALIA", "ÜNAL", "basakunal82@gmail.com", "5319853525", "TOROS ÜNAL"],
+            ["CEREN", "SIRCAN", "Cerenky@gmail.com", "5322712109", "AREL SIRCAN"],
+            ["SERENAD", "SAHABİ", "Serenatsahin0732@gmail.com", "5077739285", "SANAT SAHABİ"],
+            ["AYLA", "ATACAN", "eryılmazayla@gmail.com", "5337666426", "ATA ARICAN"],
+            ["IRYNA", "TOSUN", "irynasheptytska@gmail.com", "5532078621", "ADEN TOSUN"],
+            ["NEHİR", "ARCA", "Nehir.arca@isbank.com.tr", "5467660100", "AREL ARCA"],
+            ["HÜLYA", "ALTINTAŞ", "hulya_mencik88@hotmail.com", "5374932228", "LİDYA ALTINTAŞ"],
+            ["REGİNA", "TANRIÖVEN", "azxc1212@bk.ru", "5531317133", "İREN TANRIÖVEN"],
+            ["SELİN", "DEDEOĞLU", "Selinguler8282@gmail.com", "5323154696", "ALP DEDEOĞLU"],
+            ["SİNEM", "KAYA", "kursunsinem@gmail.com", "5074122585", "DÜNYA KAYA"],
+            ["NAFİKAR", "BAŞKAN", "nafikar.turan@gmail.com", "5078549387", "HALİL EGE BAŞKAN"],
+            ["YAŞAM", "SEYREKBASAN", "yasamkoç@hotmail.com", "5066428302", "SADIK ATEŞ SEYREKBASAN"],
+            ["ÖZLEM", "YALIN", "ozlem_ozdemir_07@hotmail.com", "5379172594", "BULUT YALIN"],
+            ["ZEREN", "CAN", "bozoglanzeren@gmail.com", "5307809840", "ECE CAN"],
+            ["HURİYE", "YAPICI", "huri_ss@hotmail.com", "5307809840", "ALP YAPICI"],
+            ["ŞERİFE", "ZORLU", "s.zorlu@zorluhukuk.com", "5067052404", "YAĞIZ ZORLU"],
+        ];
 
         return $list[$schoolId][$classId];
     }
