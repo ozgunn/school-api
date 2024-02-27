@@ -26,7 +26,7 @@ class BusController extends BaseController
         if ($user->role == User::ROLE_SUPERADMIN) {
             $buses = Bus::find()->with('school')->with('teacher');
         } else {
-            $schools = $user->getSchools()->pluck('id')->toArray();
+            $schools = $user->getSchoolIds();
             $buses = Bus::whereIn('school_id', $schools);
         }
 
@@ -104,7 +104,7 @@ class BusController extends BaseController
     private function findUserBus(int $id)
     {
         $user = auth()->user();
-        $schools = $user->getSchools()->pluck('id')->toArray();
+        $schools = $user->getSchoolIds();
 
         if ($user->role === User::ROLE_SUPERADMIN) {
             $bus = Bus::where(['id' => $id])->firstOrFail();

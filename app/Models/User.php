@@ -135,7 +135,12 @@ class User extends Authenticatable implements JWTSubject, CanResetPassword
 
     public function getSchools()
     {
-        return $this->schools()->whereNotNull('parent_id')->get();
+        return $this->schools()->whereNotNull('parent_id')->distinct()->get();
+    }
+
+    public function getSchoolIds()
+    {
+        return $this->getSchools()->pluck('id')->unique()->toArray();
     }
 
     public function getSchool()

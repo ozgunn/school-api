@@ -46,7 +46,7 @@ class ClassController extends BaseController
 
         $validated = $request->validated();
         // School control
-        $schools = $this->getSchoolIds($user);
+        $schools = $user->getSchoolIds();
         if (!in_array($validated['school_id'], $schools)) {
             return $this->sendError(__('Not allowed'), __('You are unauthorized'), 403);
         }
@@ -72,7 +72,7 @@ class ClassController extends BaseController
 
         $item = SchoolClass::where(['id' => $id, 'school_id' => $validated['school_id']])->firstOrFail();
         // School control
-        $schools = $this->getSchoolIds($user);
+        $schools = $user->getSchoolIds();
         if (!in_array($item->school_id, $schools)) {
             return $this->sendError(__('Not allowed'), __('You are unauthorized'), 403);
         }
@@ -114,7 +114,7 @@ class ClassController extends BaseController
         if ($user->role === User::ROLE_SUPERADMIN) {
             $items = SchoolClass::all();
         } else {
-            $items = SchoolClass::whereIn('school_id', $this->getSchoolIds($user))->get();
+            $items = SchoolClass::whereIn('school_id', $user->getSchoolIds())->get();
         }
 
         return $items;
@@ -126,14 +126,9 @@ class ClassController extends BaseController
         if ($user->role === User::ROLE_SUPERADMIN) {
             $group = SchoolClass::where('id', $id)->firstOrFail();
         } else {
-            $group = SchoolClass::where('id', $id)->whereIn('school_id', $this->getSchoolIds($user))->firstOrFail();
+            $group = SchoolClass::where('id', $id)->whereIn('school_id', $user->getSchoolIds())->firstOrFail();
         }
 
         return $group;
-    }
-
-    private function getSchoolIds($user)
-    {
-        return $user->schools()->distinct()->whereNotNull('parent_id')->pluck('id')->toArray();
     }
 }

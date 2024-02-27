@@ -7,6 +7,7 @@ use App\Http\Requests\ProfileUpdateRequest;
 use App\Http\Requests\UserRequest;
 use App\Http\Resources\UserResource;
 use App\Http\Resources\UserSchoolsCollection;
+use App\Models\Group;
 use App\Models\User;
 use App\Models\UserDevice;
 use App\Services\Sms\SmsModel;
@@ -60,6 +61,11 @@ class AuthController extends BaseController
                 'user' => new UserResource($user),
                 'schools' => new UserSchoolsCollection($schools),
             ];
+
+            if ($user->role > User::ROLE_MANAGER) {
+                $groups = Group::whereIn('school_id', $user->getSchoolIds())->get(['id', 'name', 'age_group'])->toArray();
+                $data['groups'] = $groups;
+            }
             Log::channel('db')->info('login', ['user' => Auth::id(), 'ip' => \request()->ip()]);
 
             return $this->sendResponse($data, __('Logged in successfully!'));

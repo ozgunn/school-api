@@ -26,7 +26,7 @@ class UserController extends BaseController
     public function index(Request $request)
     {
         $user = $this->getUser();
-        $schools = $user->schools()->get(['id'])->pluck('id')->unique()->toArray();
+        $schools = $user->getSchoolIds();
 
         $filters = $request->validate([
             'school_id' => [
@@ -82,7 +82,7 @@ class UserController extends BaseController
             return $this->sendError(__('Not allowed'), __('You are unauthorized'), 403);
         }
 
-        $schools = $user->schools()->get()->pluck('id')->toArray();
+        $schools = $user->getSchoolIds();
 
         if (isset($validated['school_ids']) && array_diff($validated['school_ids'], $schools)) {
             return $this->sendError(__('Not allowed'), __('Invalid school'), 403);

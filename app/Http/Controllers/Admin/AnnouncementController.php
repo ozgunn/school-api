@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\BaseController;
 use App\Http\Resources\AnnouncementResource;
+use App\Models\Announcement;
 use App\Models\AnnouncementRecipient;
 use Illuminate\Http\Request;
 
@@ -14,16 +15,15 @@ class AnnouncementController extends BaseController
      */
     public function index(Request $request)
     {
+        $user = auth()->user();
+        $schools = $user->getSchoolIds();
 
-        $announcements = AnnouncementRecipient::where('student_id', $student->id)
-            ->with(['announcement.contents' => function ($query) use ($userLang) {
-                $query->where('lang', $userLang);
-            }])
-            ->get();
+        $announcements = Announcement::whereIn('school_id', $schools)
+            ->with(['recipients', 'contents'])
+            ->orderByDesc('id')
+            ->take(100)->get();
 
-        $data = [
-            'announcements' => AnnouncementResource::collection($announcements),
-        ];
+        $data = AnnouncementResource::collection($announcements);
 
         return $this->sendResponse($data);
     }

@@ -83,6 +83,7 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::resource('buses', \App\Http\Controllers\Admin\BusController::class);
         Route::resource('files', \App\Http\Controllers\Admin\FilesController::class);
         Route::resource('food-menu', \App\Http\Controllers\Admin\FoodMenuController::class);
+        Route::resource('announcements', \App\Http\Controllers\Admin\AnnouncementController::class);
     });
 });
 

@@ -99,12 +99,15 @@ class StudentController extends BaseController
     private function findUserStudents()
     {
         $user = auth()->user();
-        $schools = $user->getSchools()->pluck('id')->toArray();
+        $schools = $user->getSchoolIds();
 
         if ($user->role === User::ROLE_SUPERADMIN) {
             $students = Student::with(['school', 'class', 'parent', 'class.teacher', 'morningBus', 'eveningBus']);
         } else {
             $students = Student::with(['school', 'class', 'parent', 'class.teacher', 'morningBus', 'eveningBus'])->whereIn('school_id', $schools);
+        }
+        if ($class = (int) \request()->get('class_id')) {
+            $students = $students->where('class_id', $class);
         }
 
         return $students;
@@ -113,13 +116,13 @@ class StudentController extends BaseController
     private function findUserStudent(int $id)
     {
         $user = auth()->user();
-        $schools = $user->getSchools()->pluck('id')->toArray();
+        $schools = $user->getSchoolIds();
 
         if ($user->role === User::ROLE_SUPERADMIN) {
             $student = Student::where(['id' => $id])->firstOrFail();
         } else {
             $student = Student::with(['school', 'class', 'parent', 'class.teacher', 'morningBus', 'eveningBus'])
-                ->where(['id' => $id])->whereIn('school_id', $schools)->first();
+                ->where(['id' => $id])->whereIn('school_id', $schools)->firstOrFail();
         }
 
         return $student;

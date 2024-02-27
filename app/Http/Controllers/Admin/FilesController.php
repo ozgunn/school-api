@@ -120,7 +120,7 @@ class FilesController extends BaseController
     private function userSchools()
     {
         $user = auth()->user();
-        $schools = $user->getSchools()->pluck('id')->toArray();
+        $schools = $user->getSchoolIds();
 
         return $schools;
     }
