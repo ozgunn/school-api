@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Jobs\SendFirebaseNotification;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -148,6 +149,11 @@ class User extends Authenticatable implements JWTSubject, CanResetPassword
         return $this->schools()->whereNotNull('parent_id')->first();
     }
 
+    public function teacherClass()
+    {
+        return $this->belongsTo(SchoolClass::class, 'id', 'teacher_id');
+    }
+
     public function getParentsStudents()
     {
         return Student::where(['parent_id' => $this->id]);
@@ -219,6 +225,19 @@ class User extends Authenticatable implements JWTSubject, CanResetPassword
                 }
             }
         }
+    }
+
+    public function sendNotification($from, $title, $body, $page)
+    {
+        $n = new UserNotification();
+        $n->sender_id = $from->id;
+        $n->user_id = $this->id;
+        $n->title = $title;
+        $n->description = $body;
+        $n->page = $page;
+        $n->save();
+
+        dispatch(new SendFirebaseNotification($n));
     }
 
 }

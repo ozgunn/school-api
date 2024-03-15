@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Jobs\SendFirebaseNotification;
 use Carbon\Traits\Date;
 use Carbon\Traits\Timestamp;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -85,5 +86,18 @@ class Student extends Model
             $this->morningBus->first(),
             $this->eveningBus->first(),
         ];
+    }
+
+    public function sendNotification($from, $title, $body, $page)
+    {
+        $n = new UserNotification();
+        $n->sender_id = $from->id;
+        $n->user_id = $this->parent_id;
+        $n->title = $title;
+        $n->description = $body;
+        $n->page = $page;
+        $n->save();
+
+        dispatch(new SendFirebaseNotification($n));
     }
 }
