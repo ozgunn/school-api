@@ -26,6 +26,7 @@ class AnnouncementResource extends JsonResource
         } else {
             $response = [
                 'id' => $this->id,
+                'target' => $this->target,
                 'content' => $this->contents,
                 'school_id' => $this->school_id,
                 'group_id' => $this->group_id,
