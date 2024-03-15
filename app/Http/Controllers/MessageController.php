@@ -204,15 +204,17 @@ class MessageController extends BaseController
 
         if ($message) {
             // send notification
-            $n = new UserNotification();
-            $n->sender_id = $user->id;
-            $n->user_id = $student->id;
-            $n->title = __('New message from teacher');
-            $n->description = __('Click for detail');
-            $n->page = 'messagesteacher';
-            $n->save();
+            $student->sendNotification(auth()->user(), __('New message from teacher'), __('Click for detail'), 'messagesteacher');
 
-            dispatch(new SendFirebaseNotification($n));
+//            $n = new UserNotification();
+//            $n->sender_id = $user->id;
+//            $n->user_id = $student->id;
+//            $n->title = __('New message from teacher');
+//            $n->description = __('Click for detail');
+//            $n->page = 'messagesteacher';
+//            $n->save();
+//
+//            dispatch(new SendFirebaseNotification($n));
         }
 
         return $this->sendResponse($message ? new MessageResource($message) : null);

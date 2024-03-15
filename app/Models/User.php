@@ -149,11 +149,6 @@ class User extends Authenticatable implements JWTSubject, CanResetPassword
         return $this->schools()->whereNotNull('parent_id')->first();
     }
 
-    public function teacherClass()
-    {
-        return $this->belongsTo(SchoolClass::class, 'id', 'teacher_id');
-    }
-
     public function getParentsStudents()
     {
         return Student::where(['parent_id' => $this->id]);

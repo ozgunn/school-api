@@ -90,8 +90,8 @@ class AnnouncementController extends BaseController
                     }
                 } else if ($announcement->target == Announcement::TARGET_TEACHER) {
                     //$teacher = User::where(['id' => $validated['teacher_id']])->firstOrFail();
-                    $teacher = User::with('teacherClass')
-                        ->whereHas('teacherClass', function($query) use ($validated) {
+                    $teacher = User::with('teachersClass')
+                        ->whereHas('teachersClass', function($query) use ($validated) {
                             $query->where('id', $validated['class_id']);
                         })->firstOrFail();
                     $recipient = new AnnouncementRecipient([
