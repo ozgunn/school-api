@@ -57,7 +57,12 @@ class SendFirebaseNotification implements ShouldQueue
             if ($userDevice->status == UserDevice::STATUS_OPEN) {
                 $message['token'] = $userDevice->token;
 
-                $result = $service->send(CloudMessage::fromArray($message));
+                try {
+                    $result = $service->send(CloudMessage::fromArray($message));
+                } catch (\Exception $exception) {
+
+                    Log::error('push notification sent failed', ['user' => $user->id, 'title' => $this->notification->title, 'result' => $exception->getMessage()]);
+                }
 
                 if(isset($result['name'])) {
                     Log::info('push notification sent', ['user' => $user->id, 'title' => $this->notification->title, 'result' => $result['name']]);
