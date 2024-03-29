@@ -84,11 +84,15 @@ class FilesController extends BaseController
     {
         $validated = $request->validated();
 
+        if ($validated['type'] == Files::TYPE_PDF_PARENTS) {
+            $validated['group_id'] = null;
+        }
+
         $pdf = $this->findResource($id);
 
-        if (!in_array($request->school_id, $this->userSchools())) {
-            return $this->sendError(trans('Error'), ['Not allowed']);
-        }
+//        if (!in_array($request->school_id, $this->userSchools())) {
+//            return $this->sendError(trans('Error'), ['Not allowed']);
+//        }
 
         $pdf->update($validated);
         Log::channel('db')->info('Newspaper updated', ['id' => $pdf->id]);

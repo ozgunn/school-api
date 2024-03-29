@@ -6,6 +6,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -49,25 +50,26 @@ class Handler extends ExceptionHandler
     {
         $response = [
             'success' => false,
-            'error' => 'An error occurred',
+            'error' => __('An error occurred'),
             'errorMsg' => $e->getMessage()
         ];
         $code = 500;
 
         if ($e instanceof NotFoundHttpException) {
-            $response['error'] = 'Resource not found';
+            $response['error'] = __('Resource not found');
             $response['errorMsg'] = $e->getMessage();
             $code = 404;
         }
 
         if ($e instanceof ValidationException) {
-            $response['error'] = 'Validation error';
+            $response['error'] = __('Validation error');
             $response['errorMsg'] = $e->validator->errors();
+            Log::channel("db")->error('validation error', array_merge(['user' => auth()->id()], $e->validator->errors()->messages()));
             $code = 422;
         }
 
         if ($e instanceof NotAcceptableHttpException) {
-            $response['error'] = 'Not allowed';
+            $response['error'] = __('Not allowed');
             $response['errorMsg'] = $e->getMessage();
             $code = 406;
         }

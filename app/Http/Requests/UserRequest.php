@@ -19,10 +19,11 @@ class UserRequest extends FormRequest
     public function rules()
     {
         $userId = (int) Route::current()->parameter('user');
+        $password = $this->password;
 
         $rules = [
             'name' => 'nullable|string|max:50',
-            'password' => 'nullable|string|min:6',
+            'password' => 'sometimes|required|string|min:6|confirmed',
             'username' => [
                 'nullable',
                 'string',
@@ -61,7 +62,7 @@ class UserRequest extends FormRequest
                 Rule::in(array_keys(User::ROLES)),
             ],
             'school_id' => [
-                'nullable', 'integer',
+                'sometimes', 'required', 'integer',
             ],
             'school_ids' => [
                 'nullable', 'array',
@@ -100,6 +101,6 @@ class UserRequest extends FormRequest
 
     public function withValidator($validator)
     {
-        $validator->stopOnFirstFailure();
+        //$validator->stopOnFirstFailure();
     }
 }

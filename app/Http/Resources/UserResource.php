@@ -28,6 +28,7 @@ class UserResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'user_data' => $this->getUserData(),
+            'school_id' => $this->getSchool()?->id,
             'school' => $this->getSchoolData(),
             'company' => $this->getCompanyData(),
             'image' => $this->getProfileImageUrl(),

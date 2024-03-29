@@ -16,11 +16,11 @@ class AnnouncementRequest extends FormRequest
         $rules = [
             'school_id' => 'required|integer',
             'group_id' => 'nullable|integer',
+            'class_id' => 'nullable|integer',
             'student_id' => 'nullable|integer',
             'target' => 'required|integer',
             'lang' => 'nullable|string',
             'content' => 'required|string',
-            'class_id' => 'required|integer',
         ];
 
 //        $rules['class_id'] = 'integer|required_if:target,'. Announcement::TARGET_STUDENT;

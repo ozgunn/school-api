@@ -8,6 +8,7 @@ use App\Http\Resources\AnnouncementResource;
 use App\Models\Announcement;
 use App\Models\AnnouncementContent;
 use App\Models\AnnouncementRecipient;
+use App\Models\School;
 use App\Models\SchoolClass;
 use App\Models\Student;
 use App\Models\User;
@@ -40,6 +41,7 @@ class AnnouncementController extends BaseController
      */
     public function show(int $id)
     {
+        abort(404);
         $user = auth()->user();
         $userLang = app()->getLocale();
 
@@ -89,19 +91,29 @@ class AnnouncementController extends BaseController
                         $student->sendNotification(auth()->user(), __('New announcement'), substr($validated['content'], 0,100) . '...', 'announcements');
                     }
                 } else if ($announcement->target == Announcement::TARGET_TEACHER) {
-                    //$teacher = User::where(['id' => $validated['teacher_id']])->firstOrFail();
-                    $teacher = User::with('teachersClass')
-                        ->whereHas('teachersClass', function($query) use ($validated) {
-                            $query->where('id', $validated['class_id']);
-                        })->firstOrFail();
-                    $recipient = new AnnouncementRecipient([
-                        'announcement_id' => $announcement->id,
-                        'teacher_id' => $teacher->id,
-                    ]);
+                    $teachers = [];
+                    if(isset($validated['group_id']) && !isset($validated['class_id'])) {
+                        throw new \Exception(__("You have to select a class"));
+                    } else if (isset($validated['class_id'])) {
+                        $teacher = User::with('teachersClass')
+                            ->whereHas('teachersClass', function($query) use ($validated) {
+                                $query->where('id', $validated['class_id']);
+                            })->firstOrFail();
+                        $teachers[] = $teacher;
+                    } else {
+                        $school = School::findOrFail($validated['school_id']);
+                        $teachers = $school->teachers()->get();
+                    }
 
-                    $announcement->recipients()->save($recipient);
+                    foreach ($teachers as $teacher) {
+                        $recipient = new AnnouncementRecipient([
+                            'announcement_id' => $announcement->id,
+                            'teacher_id' => $teacher->id,
+                        ]);
 
-                    $teacher->sendNotification(auth()->user(), __('New announcement'), substr($validated['content'], 0,100) . '...', 'announcements');
+                        $announcement->recipients()->save($recipient);
+                        $teacher->sendNotification(auth()->user(), __('New announcement'), substr($validated['content'], 0,100) . '...', 'announcements');
+                    }
                 }
 
                 return $announcement;

@@ -78,7 +78,7 @@ class UserController extends BaseController
         $validated['name'] = $userData ? $userData['first_name'] . ' ' . $userData['last_name'] : $validated['name'] ?? null;
 
         $user = $this->getUser();
-        if ($validated['role'] > $user->role) {
+        if ($user->role < User::ROLE_ADMIN && $validated['role'] >= $user->role) {
             return $this->sendError(__('Not allowed'), __('You are unauthorized'), 403);
         }
 
@@ -147,11 +147,11 @@ class UserController extends BaseController
 
         $authuser = auth()->user();
 
-        if ($user->role >= $authuser->role) {
+        if ($authuser->role < User::ROLE_ADMIN && $user->role >= $authuser->role) {
             return $this->sendError(__('Not allowed'), __('You are unauthorized'), 403);
         }
 
-        // user school kontrolü
+        // user school kontrolü && school update
         // TODO: Bir user birden çok okulda kullanıcı ise ne olacak?
         //  A kurumumun müdürü olarak B kurumunda da kayıtlı olan bir userı güncelleyebilmeli miyim?
         //  multi user sistemini kaldırmalı mıyım?
@@ -162,7 +162,12 @@ class UserController extends BaseController
             unset($validated['password']);
         }
 
-        $validated['name'] = $userData ? $userData['first_name'] . ' ' . $userData['last_name'] : $validated['name'] ;
+        $validated['name'] = $userData ? $userData['first_name'] . ' ' . $userData['last_name'] :
+            ($validated['name'] ?? null) ;
+
+        if (!$validated['name']) {
+            return $this->sendError(__('Validation error'), __('Enter a name'), 422);
+        }
 
         try {
             $result = DB::transaction(function () use ($user, $validated, $userData) {

@@ -22,5 +22,10 @@
     "Update failed": "Güncelleme işlemi başarısız!",
     "Uploaded successfully": "Yükleme başarılı",
     "Error": "Hata",
-    "Your password reset code: :code": "Şifre yenileme için kod: :code"
+    "An error occurred": "Bir hata oluştu",
+    "Resource not found": "Kaynak bulunamadı",
+    "Validation error": "Doğrulama hatası",
+    "Not allowed": "Erişim izni yok",
+    "Your password reset code: :code": "Şifre yenileme için kod: :code",
+    "You have to select a class": "Grup seçtiğinizde bir sınıf da seçmelisiniz"
 }
