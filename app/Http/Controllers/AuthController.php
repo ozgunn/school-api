@@ -62,7 +62,7 @@ class AuthController extends BaseController
                 'schools' => new UserSchoolsCollection($schools),
             ];
 
-            if ($user->role > User::ROLE_MANAGER) {
+            if ($user->role >= User::ROLE_MANAGER) {
                 $groups = Group::whereIn('school_id', $user->getSchoolIds())->get(['id', 'name', 'age_group'])->toArray();
                 $data['groups'] = $groups;
             }
