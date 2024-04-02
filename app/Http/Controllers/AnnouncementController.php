@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\AnnouncementResource;
 use App\Models\AnnouncementRecipient;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class AnnouncementController extends BaseController
@@ -16,14 +17,21 @@ class AnnouncementController extends BaseController
         $user = auth()->user();
         $userLang = app()->getLocale();
 
-        $student = $user->getParentsStudent();
+        if ($user->role == User::ROLE_PARENT) {
+            $student = $user->getParentsStudent();
 
-        $announcements = AnnouncementRecipient::where('student_id', $student->id)
-            ->with(['announcement.contents' => function ($query) use ($userLang) {
-                $query->where('lang', $userLang);
-            }])
-            ->get();
-
+            $announcements = AnnouncementRecipient::where('student_id', $student->id)
+                ->with(['announcement.contents' => function ($query) use ($userLang) {
+                    $query->where('lang', $userLang);
+                }])
+                ->get();
+        } else {
+            $announcements = AnnouncementRecipient::where('teacher_id', $user->id)
+                ->with(['announcement.contents' => function ($query) use ($userLang) {
+                    $query->where('lang', $userLang);
+                }])
+                ->get();
+        }
         $data = [
             'announcements' => AnnouncementResource::collection($announcements),
         ];
@@ -39,14 +47,21 @@ class AnnouncementController extends BaseController
         $user = auth()->user();
         $userLang = app()->getLocale();
 
-        $student = $user->getParentsStudent();
+        if ($user->role == User::ROLE_PARENT) {
+            $student = $user->getParentsStudent();
 
-        $announcement = AnnouncementRecipient::where(['student_id' => $student->id, 'id' => $id])
-            ->with(['announcement.contents' => function ($query) use ($userLang) {
-                $query->where('lang', $userLang);
-            }])
-            ->firstOrFail();
-
+            $announcement = AnnouncementRecipient::where(['student_id' => $student->id, 'id' => $id])
+                ->with(['announcement.contents' => function ($query) use ($userLang) {
+                    $query->where('lang', $userLang);
+                }])
+                ->firstOrFail();
+        } else {
+            $announcement = AnnouncementRecipient::where(['teacher_id' => $user->id, 'id' => $id])
+                ->with(['announcement.contents' => function ($query) use ($userLang) {
+                    $query->where('lang', $userLang);
+                }])
+                ->firstOrFail();
+        }
         // Mark as read
         $announcement->read_at = new \DateTime();
         $announcement->save();
