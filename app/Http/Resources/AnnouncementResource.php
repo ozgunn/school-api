@@ -27,7 +27,7 @@ class AnnouncementResource extends JsonResource
             $response = [
                 'id' => $this->id,
                 'target' => $this->target,
-                'content' => $this->contents?->first()?->content,
+                'content' => $this->contents,
                 'school_id' => $this->school_id,
                 'group_id' => $this->group_id,
                 'class_id' => $this->class_id,
