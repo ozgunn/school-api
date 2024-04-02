@@ -17,7 +17,7 @@ class AnnouncementResource extends JsonResource
     {
         /** @var User $user */
         $user = auth()->user();
-        if ($user->role == User::ROLE_PARENT) {
+        if ($user->role < User::ROLE_MANAGER) {
             $response = [
                 'id' => $this->id,
                 'content' => $this->announcement->contents->first()->content,
@@ -27,7 +27,7 @@ class AnnouncementResource extends JsonResource
             $response = [
                 'id' => $this->id,
                 'target' => $this->target,
-                'content' => $this->contents,
+                'content' => $this->announcement->contents->first()->content,
                 'school_id' => $this->school_id,
                 'group_id' => $this->group_id,
                 'class_id' => $this->class_id,
