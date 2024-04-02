@@ -69,7 +69,7 @@ class SendFirebaseNotification implements ShouldQueue
                     $this->notification->sent_at = Carbon::now();
                     $this->notification->update();
                 } else {
-                    Log::channel('db')->error('push notification sent failed', ['user' => $user->id, 'title' => $this->notification->title, 'result' => $result ?? null]);
+                    Log::channel('db')->error('push notification sent failed', ['user' => $user->id, 'title' => $this->notification->title, 'result' => $result ?? $message]);
                 }
             }
         }
