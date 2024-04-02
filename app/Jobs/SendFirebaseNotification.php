@@ -61,15 +61,15 @@ class SendFirebaseNotification implements ShouldQueue
                     $result = $service->send(CloudMessage::fromArray($message));
                 } catch (\Exception $exception) {
 
-                    Log::error('push notification sent failed', ['user' => $user->id, 'title' => $this->notification->title, 'result' => $exception->getMessage()]);
+                    Log::channel('db')->error('push notification sent failed', ['user' => $user->id, 'title' => $this->notification->title, 'result' => $exception->getMessage()]);
                 }
 
                 if(isset($result['name'])) {
-                    Log::info('push notification sent', ['user' => $user->id, 'title' => $this->notification->title, 'result' => $result['name']]);
+                    Log::channel('db')->info('push notification sent', ['user' => $user->id, 'title' => $this->notification->title, 'result' => $result['name']]);
                     $this->notification->sent_at = Carbon::now();
                     $this->notification->update();
                 } else {
-                    Log::error('push notification sent failed', ['user' => $user->id, 'title' => $this->notification->title, 'result' => $result]);
+                    Log::channel('db')->error('push notification sent failed', ['user' => $user->id, 'title' => $this->notification->title, 'result' => $result]);
                 }
             }
         }
