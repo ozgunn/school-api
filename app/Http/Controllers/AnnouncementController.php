@@ -24,13 +24,13 @@ class AnnouncementController extends BaseController
                 ->with(['announcement.contents' => function ($query) use ($userLang) {
                     $query->where('lang', $userLang);
                 }])
-                ->get();
+                ->latest()->take(30)->get();
         } else {
             $announcements = AnnouncementRecipient::where('teacher_id', $user->id)
                 ->with(['announcement.contents' => function ($query) use ($userLang) {
                     $query->where('lang', $userLang);
                 }])
-                ->get();
+                ->latest()->take(30)->get();
         }
         $data = [
             'announcements' => AnnouncementResource::collection($announcements),
