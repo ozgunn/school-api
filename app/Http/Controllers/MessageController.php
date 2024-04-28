@@ -93,7 +93,7 @@ class MessageController extends BaseController
             $n = new UserNotification();
             $n->sender_id = $user->id;
             $n->user_id = $teacher_id;
-            $n->title = __('New message from student');
+            $n->title = __('New message') . ": " . $student->name;
             $n->description = __(':name sent a new message', ['name' => $student->name]);
             $n->page = 'messagesstudent';
             $n->page_id = $student->id;
