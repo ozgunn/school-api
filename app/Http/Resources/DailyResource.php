@@ -32,13 +32,13 @@ class DailyResource extends JsonResource
             $teacherData = $this->user ? [
                 "teacher" => [
                     "id" => $this->user->id,
-                    "name" => "asd asd",
+                    "name" => $this->user->name,
                 ]
             ] : [];
             $studentData = $this->student ? [
                 "student" => [
                     "id" => $this->student->id,
-                    "name" => "1asd 1asd",
+                    "name" => $this->student->name,
                 ]
             ] : [];
             $additionalData = [
