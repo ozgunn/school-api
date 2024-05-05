@@ -5,12 +5,14 @@ namespace App\Models;
 use Carbon\Traits\Timestamp;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property integer $id
  * @property integer $student_id
  * @property integer $school_id
  * @property integer $class_id
+ * @property integer $user_id
  * @property string $selected_notes
  * @property string $note
  * @property \DateTime $data
@@ -20,7 +22,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class DailyReport extends Model
 {
-    use HasFactory, Timestamp;
+    use HasFactory, Timestamp, SoftDeletes;
 
     protected $table = 'daily_reports';
 
@@ -61,6 +63,10 @@ class DailyReport extends Model
 
     public function student() {
         return $this->belongsTo(Student::class, 'student_id', 'id');
+    }
+
+    public function user() {
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
     public function school() {

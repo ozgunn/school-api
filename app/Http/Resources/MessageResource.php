@@ -20,6 +20,7 @@ class MessageResource extends JsonResource
 
         if ($this->student_id) {
             return [
+                'id' => $this->id,
                 'message' => $this->message,
                 'student' => new StudentResource($this->student),
                 'user_id' => $this->user_id,

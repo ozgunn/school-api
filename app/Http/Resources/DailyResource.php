@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\DailyNote;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -16,6 +17,9 @@ class DailyResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        /** @var User $user */
+        $user = auth()->user();
+
         $response = [
             'id' => $this->id,
             'date' => date('Y-m-d', strtotime($this->date)),
@@ -23,6 +27,25 @@ class DailyResource extends JsonResource
             'read_at' => $this->read_at,
             'confirmed_at' => $this->confirmed_at
         ];
+
+        if ($user->role >= User::ROLE_MANAGER) {
+            $teacherData = $this->user ? [
+                "teacher" => [
+                    "id" => $this->user->id,
+                    "name" => "asd asd",
+                ]
+            ] : [];
+            $studentData = $this->student ? [
+                "student" => [
+                    "id" => $this->student->id,
+                    "name" => "1asd 1asd",
+                ]
+            ] : [];
+            $additionalData = [
+                'created_at' => $this->created_at,
+            ];
+            $response = array_merge($response, $teacherData, $studentData, $additionalData);
+        }
 
         $response = array_merge($response, $this->decorateNotes());
 
