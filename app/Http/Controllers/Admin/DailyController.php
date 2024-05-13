@@ -35,7 +35,7 @@ class DailyController extends BaseController
 
         try {
             $item->delete();
-            Log::channel('db')->info('Daily Report deleted', ['id' => $item->id]);
+            Log::channel('db')->info('daily deleted', ['id' => $item->id]);
 
             return $this->sendResponse(__('Deleted'), __('Deleted successfully'));
         } catch (\Exception $e) {

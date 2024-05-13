@@ -357,7 +357,7 @@ class AuthController extends BaseController
                 'status' => $request->status
             ]);
 
-            Log::channel('db')->info('UserDevice updated', ['id' => $userDevice->id]);
+            Log::channel('db')->info('UserDevice updated', ['id' => $userDevice->id, 'status' => $userDevice->status]);
         } else {
             $userDevice = UserDevice::create([
                 'token' => $request->token,
@@ -367,7 +367,7 @@ class AuthController extends BaseController
                 'model' => $request->deviceModel,
             ]);
 
-            Log::channel('db')->info('UserDevice created', ['id' => $userDevice->id]);
+            Log::channel('db')->info('UserDevice created', ['id' => $userDevice->id, 'name' => $request->deviceName, 'model' => $request->deviceModel]);
         }
 
         if ($userDevice) {

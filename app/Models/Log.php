@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
 use Carbon\Traits\Timestamp;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -15,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $context
  * @property \DateTime $created_at
  * @property \DateTime $updated_at
+ * @property User $user
  */
 class Log extends Model
 {
@@ -51,5 +51,9 @@ class Log extends Model
      */
     protected $casts = [
     ];
+
+    public function user() {
+        return $this->belongsTo(User::class);
+    }
 
 }

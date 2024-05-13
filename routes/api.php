@@ -86,6 +86,8 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::resource('announcements', \App\Http\Controllers\Admin\AnnouncementController::class);
         Route::resource('daily', \App\Http\Controllers\Admin\DailyController::class);
         Route::resource('messages', \App\Http\Controllers\Admin\MessageController::class);
+        Route::resource('media', \App\Http\Controllers\Admin\MediaController::class);
+        Route::resource('logs', \App\Http\Controllers\Admin\LogController::class);
     });
 });
 

@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\Media;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -15,6 +16,9 @@ class MediaResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        /** @var User $user */
+        $user = auth()->user();
+
         $response = [
             'day' => date('Y-m-d', strtotime($this->publish_date)),
             'id' => $this->id,
@@ -28,6 +32,17 @@ class MediaResource extends JsonResource
             'publish_date' => $this->publish_date,
             'description' => $this->description,
         ];
+
+        if ($user->role >= User::ROLE_MANAGER) {
+            $additional = [
+                'school_name' => $this->school ? $this->school->name : null,
+                'class_name' => $this->schoolClass ? $this->schoolClass->name : null,
+                'user_name' => $this->user ? $this->user->name : null,
+                'group_name' => $this->group ? $this->group->name : null,
+                'created_at' => $this->created_at,
+            ];
+            return array_merge($response, $additional);
+        }
 
         return $response;
     }
