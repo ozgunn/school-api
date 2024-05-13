@@ -19,6 +19,7 @@ class LogResource extends JsonResource
             'user' => $this->user ? [
                 'id' => $this->user->id,
                 'name' => $this->user->name,
+                'role' => $this->user->role,
             ] : null,
             'level' => $this->level,
             'message' => $this->message,
