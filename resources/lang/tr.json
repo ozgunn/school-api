@@ -1,6 +1,7 @@
 {
     "Logged in successfully!": "Giriş başarılı",
     "Yemek": "Yemek",
+    "School": "Okul",
 
     "first_meal": "Kahvaltı",
     "second_meal": "Öğle",
@@ -10,6 +11,7 @@
     "New message from student": "Öğrenciden yeni mesaj",
     "New message from teacher": "Öğretmenden yeni mesaj",
     ":name sent a new message": ":name mesaj gönderdi",
+    "New message from school": "Okuldan mesaj",
     "Click for detail": "Detaylar için tıklayın",
     "New announcement": "Yeni Duyuru",
     "New message": "Yeni mesaj",

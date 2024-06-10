@@ -18,6 +18,7 @@ class MessageRequest extends FormRequest
     {
         $rules = [
             'message' => 'required|string|min:1|max:1024',
+            'student_id' => 'nullable|integer',
         ];
 
 //        if (str_contains($this->getPathInfo(), 'teacher')) {

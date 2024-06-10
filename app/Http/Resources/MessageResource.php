@@ -6,6 +6,7 @@ use App\Models\Message;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Carbon;
 
 class MessageResource extends JsonResource
 {
@@ -16,7 +17,30 @@ class MessageResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $user_id = auth()->user()->id;
+        $user = auth()->user();
+        $user_id = $user->id;
+
+        if ($user->role >= User::ROLE_MANAGER) {
+            return [
+                'id' => $this->id,
+                'message' => $this->message,
+                'sender' => ($this->user->role >= User::ROLE_MANAGER) ? 'school' : (($this->user->role == User::ROLE_TEACHER) ? 'teacher' : 'parent'),
+                'student' => [
+                    'id' => $this->student->id,
+                    'name' => $this->student->name,
+                ],
+                'parent' => [
+                    'id' => $this->student->parent->id,
+                    'name' => $this->student->parent->name,
+                ],
+                'user' => [
+                    'id' => $this->user->id,
+                    'name' => $this->user->name,
+                ],
+                'read_at' => $this->read_at,
+                'created_at' => Carbon::parse($this->created_at)->format('Y-m-d H:i'),
+            ];
+        }
 
         if ($this->student_id) {
             return [
