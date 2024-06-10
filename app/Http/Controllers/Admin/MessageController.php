@@ -43,15 +43,15 @@ class MessageController extends BaseController
     public function store(MessageRequest $request)
     {
         $user = auth()->user();
-        $school = $user->getSchool();
         $validated = $request->validated();
-        $validated['school_id'] = $school->id;
+        $student = Student::where(['id' => $validated['student_id']])->firstOrFail();
+
+        $validated['school_id'] = $student->school_id;
         $validated['user_id'] = $user->id;
         //$validated['student_id'] = $student->id;
         $validated['ip'] = $request->getClientIp();
         $validated['type'] = Message::TYPE_SCHOOL;
 
-        $student = Student::where(['id' => $validated['student_id']])->firstOrFail();
 
         $message = Message::create($validated);
 
